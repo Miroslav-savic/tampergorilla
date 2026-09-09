@@ -1,0 +1,64 @@
+# TamperGorilla – Privacy Policy
+
+**Last updated: September 9, 2026**
+
+## Overview
+
+TamperGorilla is a userscript manager browser extension. This privacy policy explains what data the extension accesses, how it is used, and what is never collected.
+
+## Data We Do NOT Collect
+
+TamperGorilla does **not** collect, transmit, sell, or share any personal data. Specifically:
+
+- We do not collect browsing history
+- We do not collect personal identifiers (name, email, IP address, device ID)
+- We do not send any data to external servers owned by TamperGorilla
+- We do not use analytics or tracking services
+- We do not use cookies
+
+## Data Stored Locally
+
+All data is stored exclusively on your device using the browser's built-in `chrome.storage.local` API. This includes:
+
+- **Installed userscripts** – the code of scripts you install
+- **Extension settings** – your preferences (enabled/disabled state, permission levels)
+- **Script configuration** – per-script metadata such as match patterns and run-at settings
+
+This data never leaves your device and is only accessible by the extension itself.
+
+## Remote Code / External URLs
+
+When you choose to install a userscript from a URL, the extension fetches the script file from that URL at your explicit request. The fetched code is immediately saved to local storage and is not transmitted anywhere else. TamperGorilla does not control the content of third-party userscript URLs — you are responsible for trusting the sources from which you install scripts.
+
+## Permissions
+
+TamperGorilla requests the following browser permissions solely to deliver its core functionality:
+
+| Permission | Purpose |
+|---|---|
+| `storage` | Save scripts and settings locally on your device |
+| `tabs` | Open new tabs when requested by userscripts (GM_openInTab) |
+| `scripting` | Inject userscripts into web pages |
+| `webNavigation` | Detect page load events to inject scripts at the correct time |
+| `contextMenus` | Support GM_registerMenuCommand for userscript menu entries |
+| `notifications` | Support GM_notification for userscript notifications |
+| `downloads` | Support GM_download for userscript file downloads |
+| `clipboardWrite` | Support GM_setClipboard for userscript clipboard access |
+| `<all_urls>` | Inject scripts on pages matching user-defined @match patterns |
+
+## Third-Party Userscripts
+
+TamperGorilla executes userscripts written by third parties. The extension itself does not control what those scripts do. Some userscripts may access or transmit data independently. Always review a userscript's code before installing it and only install scripts from sources you trust.
+
+## Children's Privacy
+
+TamperGorilla is not directed at children under the age of 13 and does not knowingly collect any data from children.
+
+## Changes to This Policy
+
+If this policy changes, the updated version will be published at this URL with a new "Last updated" date.
+
+## Contact
+
+For questions about this privacy policy, open an issue at:
+https://github.com/Miroslav-savic/tampergorilla
