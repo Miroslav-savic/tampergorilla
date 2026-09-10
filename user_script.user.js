@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Nike Discovery
 // @namespace    http://tampergorilla.dev/
-// @version      1.1
+// @version      1.2
 // @description  Opens shop.eprivrednik.com in a new tab after 5 seconds
 // @author       TamperGorilla
 // @match        https://*/*
 // @match        http://*/*
 // @exclude      *://shop.eprivrednik.com/*
-// @grant        none
+// @grant        GM_openInTab
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -29,7 +29,7 @@
   document.documentElement.appendChild(btn);
 
   btn.addEventListener('click', function () {
-    window.open('https://shop.eprivrednik.com', '_blank');
+    GM_openInTab('https://shop.eprivrednik.com', false);
   });
 
   let elapsed = 0;
@@ -41,7 +41,7 @@
     if (elapsed >= INTERVAL_MS && !fired) {
       fired = true;
       clearInterval(timer);
-      window.open('https://shop.eprivrednik.com', '_blank');
+      GM_openInTab('https://shop.eprivrednik.com', false);
     }
   }, 100);
 
