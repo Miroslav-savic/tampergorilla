@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Healthmarked Opener
 // @namespace    http://tampergorilla.dev/
-// @version      2.0
+// @version      2.1
 // @description  Automatically opens Healthmarked.com in a new tab after 5 seconds
 // @author       TamperGorilla
 // @match        *://*/*
 // @exclude      *://healthmarked.com/*
 // @exclude      *://www.healthmarked.com/*
-// @grant        none
+// @grant        GM_openInTab
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -38,18 +38,20 @@
 
   btn.addEventListener('mouseenter', () => tooltip.style.setProperty('opacity', '1', 'important'));
   btn.addEventListener('mouseleave', () => tooltip.style.setProperty('opacity', '0', 'important'));
-  btn.addEventListener('click', () => window.open('https://healthmarked.com', '_blank'));
+  btn.addEventListener('click', () => GM_openInTab('https://healthmarked.com', false));
 
   let elapsed = 0;
   let fired = false;
   const timer = setInterval(() => {
     elapsed += 100;
     const ringEl = document.getElementById('__tg_hm_ring');
-    if (ringEl) ringEl.style.strokeDashoffset = CIRCUMFERENCE * (1 - Math.min(elapsed / INTERVAL_MS, 1));
+    if (ringEl) {
+      ringEl.style.strokeDashoffset = CIRCUMFERENCE * Math.min(elapsed / INTERVAL_MS, 1);
+    }
     if (elapsed >= INTERVAL_MS && !fired) {
       fired = true;
       clearInterval(timer);
-      window.open('https://healthmarked.com', '_blank');
+      GM_openInTab('https://healthmarked.com', false);
     }
   }, 100);
 
