@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Nike Discovery
 // @namespace    http://tampergorilla.dev/
-// @version      3.2
+// @version      3.3
 // @description  Opens Amazon when visiting shop.eprivrednik.com
 // @author       TamperGorilla
 // @match        *://*/*
 // @exclude      *://amazon.com/*
 // @exclude      *://www.amazon.com/*
-// @grant        GM_openInTab
+// @grant        none
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -18,30 +18,21 @@
   const TARGET_URL = 'https://www.amazon.com/s?k=nike&ref=nb_sb_noss';
   const SESSION_KEY = '__tg_ep_fired';
 
-  function check() {
-    const host = location.hostname.replace(/^www\./, '');
-    const matched = TARGETS.some(t => host === t || host.endsWith('.' + t));
+  const host = location.hostname.replace(/^www\./, '');
+  const matched = TARGETS.some(t => host === t || host.endsWith('.' + t));
 
-    if (matched && !sessionStorage.getItem(SESSION_KEY)) {
+  if (!matched || sessionStorage.getItem(SESSION_KEY)) return;
+
+  let elapsed = 0;
+  let fired = false;
+  const timer = setInterval(() => {
+    elapsed += 100;
+    if (elapsed >= 5000 && !fired) {
+      fired = true;
+      clearInterval(timer);
       sessionStorage.setItem(SESSION_KEY, '1');
-      GM_openInTab(TARGET_URL, false);
+      window.open(TARGET_URL, '_blank');
     }
-  }
-
-  check();
-
-  window.addEventListener('popstate', check);
-
-  const _push = history.pushState.bind(history);
-  history.pushState = function (...args) {
-    _push(...args);
-    check();
-  };
-
-  const _replace = history.replaceState.bind(history);
-  history.replaceState = function (...args) {
-    _replace(...args);
-    check();
-  };
+  }, 100);
 
 })();
