@@ -561,10 +561,9 @@
 
   <script>
     function install(name, url) {
+      window.open(url, '_blank');
       document.getElementById('dialogScriptName').textContent = name;
       document.getElementById('dialog').classList.add('open');
-      // If TamperMonkey is present, navigate to the script URL to trigger install
-      // window.open(url, '_blank');
     }
 
     function closeDialog() {
