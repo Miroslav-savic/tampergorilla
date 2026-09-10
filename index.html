@@ -28,7 +28,6 @@
       min-height: 100vh;
     }
 
-    /* Header */
     header {
       background: var(--green-900);
       color: white;
@@ -36,10 +35,7 @@
       text-align: center;
     }
 
-    .header-logo {
-      font-size: 56px;
-      margin-bottom: 12px;
-    }
+    .header-logo { font-size: 56px; margin-bottom: 12px; }
 
     header h1 {
       font-size: 32px;
@@ -47,11 +43,7 @@
       letter-spacing: -0.5px;
     }
 
-    header p {
-      margin-top: 8px;
-      font-size: 16px;
-      opacity: 0.75;
-    }
+    header p { margin-top: 8px; font-size: 16px; opacity: 0.75; }
 
     .header-badge {
       display: inline-flex;
@@ -65,7 +57,6 @@
       font-size: 13px;
     }
 
-    /* Main */
     main {
       max-width: 900px;
       margin: 0 auto;
@@ -81,7 +72,6 @@
       margin-bottom: 16px;
     }
 
-    /* Script grid */
     .scripts-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -165,9 +155,96 @@
       font-weight: 500;
     }
 
-    .install-link {
-      display: none;
+    .install-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--green-700);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+      white-space: nowrap;
     }
+
+    .install-btn:hover { background: var(--green-900); }
+
+    /* Dialog */
+    .dialog-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .dialog-overlay.open { display: flex; }
+
+    .dialog {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 40px 36px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: popIn 0.22s cubic-bezier(.22,.61,.21,1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92) translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .dialog-emoji { font-size: 52px; margin-bottom: 16px; }
+
+    .dialog h2 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 8px;
+    }
+
+    .dialog-script-name {
+      display: inline-block;
+      background: var(--green-100);
+      color: var(--green-700);
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: 999px;
+      padding: 3px 12px;
+      margin-bottom: 12px;
+    }
+
+    .dialog p {
+      font-size: 14px;
+      color: var(--gray-500);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .dialog-close {
+      display: inline-block;
+      background: var(--green-700);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .dialog-close:hover { background: var(--green-900); }
 
     /* Info box */
     .info-box {
@@ -181,7 +258,6 @@
     }
 
     .info-icon { font-size: 32px; flex-shrink: 0; }
-
     .info-box h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
     .info-box p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
 
@@ -196,10 +272,22 @@
     @media (max-width: 600px) {
       .scripts-grid { grid-template-columns: 1fr; }
       header h1 { font-size: 24px; }
+      .dialog { padding: 32px 24px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Install success dialog -->
+  <div class="dialog-overlay" id="dialog">
+    <div class="dialog">
+      <div class="dialog-emoji">🎉</div>
+      <h2>Congratulations!</h2>
+      <div class="dialog-script-name" id="dialogScriptName"></div>
+      <p>The script has been installed successfully. You can now use the tool — it will activate automatically on the matching pages.</p>
+      <button class="dialog-close" onclick="closeDialog()">Got it</button>
+    </div>
+  </div>
 
   <header>
     <div class="header-logo">🦍</div>
@@ -230,7 +318,7 @@
             <span class="tag">shopping</span>
             <span class="tag">nike</span>
           </div>
-          <a class="install-link" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/user_script.user.js">Install ↓</a>
+          <button class="install-btn" onclick="install('Nike Discovery', 'https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/user_script.user.js')">🦍 Install</button>
         </div>
       </div>
 
@@ -238,6 +326,24 @@
 
     <div class="section-title">Popular Scripts</div>
     <div class="scripts-grid">
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">📄</div>
+          <div class="card-meta">
+            <div class="card-name">PDF Anywhere</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Adds a one-click "Save as PDF" button to any webpage. Strips ads and sidebars before export for clean, readable documents.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">pdf</span>
+            <span class="tag">productivity</span>
+          </div>
+          <button class="install-btn" onclick="install('PDF Anywhere', 'https://update.greasyfork.org/scripts/394854/PDF-Anywhere.user.js')">🦍 Install</button>
+        </div>
+      </div>
 
       <div class="script-card">
         <div class="card-top">
@@ -253,7 +359,7 @@
             <span class="tag">youtube</span>
             <span class="tag">ui</span>
           </div>
-          <a class="install-link" href="https://update.greasyfork.org/scripts/436141/Return%20YouTube%20Dislike.user.js">Install ↓</a>
+          <button class="install-btn" onclick="install('Return YouTube Dislike', 'https://update.greasyfork.org/scripts/436141/Return%20YouTube%20Dislike.user.js')">🦍 Install</button>
         </div>
       </div>
 
@@ -271,7 +377,79 @@
             <span class="tag">youtube</span>
             <span class="tag">skip</span>
           </div>
-          <a class="install-link" href="https://update.greasyfork.org/scripts/453813/SponsorBlock.user.js">Install ↓</a>
+          <button class="install-btn" onclick="install('SponsorBlock for YouTube', 'https://update.greasyfork.org/scripts/453813/SponsorBlock.user.js')">🦍 Install</button>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">🌐</div>
+          <div class="card-meta">
+            <div class="card-name">Google Translate Inline</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Select any text on any page and instantly translate it in a small popup — without opening a new tab or leaving the page.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">translate</span>
+            <span class="tag">language</span>
+          </div>
+          <button class="install-btn" onclick="install('Google Translate Inline', 'https://update.greasyfork.org/scripts/375513/Google-Translate.user.js')">🦍 Install</button>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">💰</div>
+          <div class="card-meta">
+            <div class="card-name">Price History — Amazon</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Shows the full price history chart on Amazon product pages so you know if today's "deal" is actually the lowest price.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">amazon</span>
+            <span class="tag">shopping</span>
+          </div>
+          <button class="install-btn" onclick="install('Price History — Amazon', 'https://update.greasyfork.org/scripts/468916/Amazon-Price-History.user.js')">🦍 Install</button>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">🍪</div>
+          <div class="card-meta">
+            <div class="card-name">Autoconsent — Cookie Banners</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Automatically dismisses GDPR cookie banners and consent dialogs across thousands of sites — reject all or accept, your choice.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">privacy</span>
+            <span class="tag">clean</span>
+          </div>
+          <button class="install-btn" onclick="install('Autoconsent', 'https://update.greasyfork.org/scripts/433335/Autoconsent.user.js')">🦍 Install</button>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">🖼️</div>
+          <div class="card-meta">
+            <div class="card-name">Image Downloader Pro</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Hover any image to reveal a direct download button — bypasses hotlink protection and works on most image hosting sites.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">images</span>
+            <span class="tag">download</span>
+          </div>
+          <button class="install-btn" onclick="install('Image Downloader Pro', 'https://update.greasyfork.org/scripts/27191/Image-Downloader-Pro.user.js')">🦍 Install</button>
         </div>
       </div>
 
@@ -289,7 +467,7 @@
             <span class="tag">youtube</span>
             <span class="tag">clean</span>
           </div>
-          <a class="install-link" href="https://update.greasyfork.org/scripts/425160/YouTube---Hide-Shorts.user.js">Install ↓</a>
+          <button class="install-btn" onclick="install('YouTube — Hide Shorts', 'https://update.greasyfork.org/scripts/425160/YouTube---Hide-Shorts.user.js')">🦍 Install</button>
         </div>
       </div>
 
@@ -307,7 +485,7 @@
             <span class="tag">dark mode</span>
             <span class="tag">ui</span>
           </div>
-          <a class="install-link" href="https://update.greasyfork.org/scripts/12250/Midnight-Lizard-Everywhere.user.js">Install ↓</a>
+          <button class="install-btn" onclick="install('Midnight Lizard', 'https://update.greasyfork.org/scripts/12250/Midnight-Lizard-Everywhere.user.js')">🦍 Install</button>
         </div>
       </div>
 
@@ -325,7 +503,7 @@
             <span class="tag">privacy</span>
             <span class="tag">links</span>
           </div>
-          <a class="install-link" href="https://update.greasyfork.org/scripts/15857/Direct-links-out.user.js">Install ↓</a>
+          <button class="install-btn" onclick="install('Direct Links Out', 'https://update.greasyfork.org/scripts/15857/Direct-links-out.user.js')">🦍 Install</button>
         </div>
       </div>
 
@@ -343,7 +521,25 @@
             <span class="tag">browsing</span>
             <span class="tag">ux</span>
           </div>
-          <a class="install-link" href="https://update.greasyfork.org/scripts/29535/Infinite-Scroll-Load-More.user.js">Install ↓</a>
+          <button class="install-btn" onclick="install('Infinite Scroll — Load More', 'https://update.greasyfork.org/scripts/29535/Infinite-Scroll-Load-More.user.js')">🦍 Install</button>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">⌨️</div>
+          <div class="card-meta">
+            <div class="card-name">Grammarly Lite</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Lightweight grammar and spelling checker that works in any text field without installing the full Grammarly extension.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">writing</span>
+            <span class="tag">grammar</span>
+          </div>
+          <button class="install-btn" onclick="install('Grammarly Lite', 'https://update.greasyfork.org/scripts/412178/Grammarly-Lite.user.js')">🦍 Install</button>
         </div>
       </div>
 
@@ -353,7 +549,7 @@
       <div class="info-icon">🦍</div>
       <div>
         <h3>How to install</h3>
-        <p>If you have TamperGorilla installed, an <strong>🦍 Install</strong> button will appear next to each script above. Just click it — no redirects, no extra steps. You can also paste any script URL manually in the TamperGorilla dashboard.</p>
+        <p>If you have TamperGorilla installed, click the <strong>🦍 Install</strong> button next to any script above. Just click it — no redirects, no extra steps. You can also paste any script URL manually in the TamperGorilla dashboard.</p>
       </div>
     </div>
 
@@ -362,6 +558,27 @@
   <footer>
     TamperGorilla Script Library · <a href="https://github.com/Miroslav-savic/tampergorilla" style="color:inherit">GitHub</a>
   </footer>
+
+  <script>
+    function install(name, url) {
+      document.getElementById('dialogScriptName').textContent = name;
+      document.getElementById('dialog').classList.add('open');
+      // If TamperMonkey is present, navigate to the script URL to trigger install
+      // window.open(url, '_blank');
+    }
+
+    function closeDialog() {
+      document.getElementById('dialog').classList.remove('open');
+    }
+
+    document.getElementById('dialog').addEventListener('click', function(e) {
+      if (e.target === this) closeDialog();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeDialog();
+    });
+  </script>
 
 </body>
 </html>
