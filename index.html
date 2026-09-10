@@ -1,21 +1,380 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Healthmarked</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TamperGorilla Script Library</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 80px auto; padding: 0 20px; }
-    .install-btn { 
-      background: #1a472a; color: white; border: none; 
-      padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-900: #1a472a;
+      --green-700: #2d7a2d;
+      --green-500: #4caf50;
+      --green-100: #e8f5e9;
+      --gray-900: #1a1a2e;
+      --gray-700: #374151;
+      --gray-500: #6b7280;
+      --gray-200: #e5e7eb;
+      --gray-100: #f9fafb;
+      --white: #ffffff;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-900);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: var(--green-900);
+      color: white;
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .header-logo {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 8px;
+      font-size: 16px;
+      opacity: 0.75;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+    }
+
+    /* Main */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-500);
+      margin-bottom: 16px;
+    }
+
+    /* Script grid */
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .script-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .script-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border-color: #c8e6c9;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .card-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--green-100);
+      border-radius: 10px;
+    }
+
+    .card-meta { flex: 1; }
+
+    .card-name {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .card-source {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--gray-700);
+      line-height: 1.55;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      background: var(--green-100);
+      color: var(--green-700);
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-weight: 500;
+    }
+
+    .install-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-900);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      padding: 7px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .install-link:hover { background: var(--green-700); }
+
+    /* Info box */
+    .info-box {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .info-icon { font-size: 32px; flex-shrink: 0; }
+
+    .info-box h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .info-box p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 12px;
+      color: var(--gray-500);
+      border-top: 1px solid var(--gray-200);
+    }
+
+    @media (max-width: 600px) {
+      .scripts-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 24px; }
     }
   </style>
 </head>
 <body>
-  <h1>🦍 Healthmarked</h1>
-  <p>Bookmark and highlight text on any webpage.</p>
-  
-  <a href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/main/user_script.user.js">
-    <button class="install-btn">Install with TamperGorilla</button>
-  </a>
+
+  <header>
+    <div class="header-logo">🦍</div>
+    <h1>TamperGorilla Script Library</h1>
+    <p>Curated userscripts for a better browsing experience</p>
+    <div class="header-badge">
+      <span>⚡</span>
+      <span>Click Install next to any script below</span>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="section-title">Featured</div>
+    <div class="scripts-grid">
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">🔖</div>
+          <div class="card-meta">
+            <div class="card-name">Healthmarked</div>
+            <div class="card-source">by Miroslav Savić</div>
+          </div>
+        </div>
+        <div class="card-desc">Bookmark and highlight text on any webpage. Save and revisit your highlights across sessions.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">productivity</span>
+            <span class="tag">highlight</span>
+          </div>
+          <a class="install-link" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/user_script.user.js">🦍 Install</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Popular Scripts</div>
+    <div class="scripts-grid">
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">👎</div>
+          <div class="card-meta">
+            <div class="card-name">Return YouTube Dislike</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Brings back the dislike count on YouTube videos using archived data and user reports.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">youtube</span>
+            <span class="tag">ui</span>
+          </div>
+          <a class="install-link" href="https://update.greasyfork.org/scripts/436141/Return%20YouTube%20Dislike.user.js">🦍 Install</a>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">⏭</div>
+          <div class="card-meta">
+            <div class="card-name">SponsorBlock for YouTube</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Skip sponsorships, intros, outros and filler segments in YouTube videos automatically.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">youtube</span>
+            <span class="tag">skip</span>
+          </div>
+          <a class="install-link" href="https://update.greasyfork.org/scripts/453813/SponsorBlock.user.js">🦍 Install</a>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">🩳</div>
+          <div class="card-meta">
+            <div class="card-name">YouTube — Hide Shorts</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Removes YouTube Shorts from home feed, subscriptions, search results and sidebar.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">youtube</span>
+            <span class="tag">clean</span>
+          </div>
+          <a class="install-link" href="https://update.greasyfork.org/scripts/425160/YouTube---Hide-Shorts.user.js">🦍 Install</a>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">🌙</div>
+          <div class="card-meta">
+            <div class="card-name">Midnight Lizard</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Applies dark color scheme to any webpage — customisable colors, contrast and brightness.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">dark mode</span>
+            <span class="tag">ui</span>
+          </div>
+          <a class="install-link" href="https://update.greasyfork.org/scripts/12250/Midnight-Lizard-Everywhere.user.js">🦍 Install</a>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">🔗</div>
+          <div class="card-meta">
+            <div class="card-name">Direct Links Out</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Removes redirect wrappers from Google, Facebook and other sites — go directly to links.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">privacy</span>
+            <span class="tag">links</span>
+          </div>
+          <a class="install-link" href="https://update.greasyfork.org/scripts/15857/Direct-links-out.user.js">🦍 Install</a>
+        </div>
+      </div>
+
+      <div class="script-card">
+        <div class="card-top">
+          <div class="card-icon">📜</div>
+          <div class="card-meta">
+            <div class="card-name">Infinite Scroll — Load More</div>
+            <div class="card-source">from Greasy Fork</div>
+          </div>
+        </div>
+        <div class="card-desc">Adds infinite scroll or a "Load more" button to paginated sites instead of navigating pages.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">browsing</span>
+            <span class="tag">ux</span>
+          </div>
+          <a class="install-link" href="https://update.greasyfork.org/scripts/29535/Infinite-Scroll-Load-More.user.js">🦍 Install</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box">
+      <div class="info-icon">🦍</div>
+      <div>
+        <h3>How to install</h3>
+        <p>If you have TamperGorilla installed, an <strong>🦍 Install</strong> button will appear next to each script above. Just click it — no redirects, no extra steps. You can also paste any script URL manually in the TamperGorilla dashboard.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    TamperGorilla Script Library · <a href="https://github.com/Miroslav-savic/tampergorilla" style="color:inherit">GitHub</a>
+  </footer>
+
 </body>
 </html>
