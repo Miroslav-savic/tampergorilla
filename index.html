@@ -125,9 +125,9 @@
     .install-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 9px 20px;
-      font-size: 13px;
+      gap: 7px;
+      padding: 12px 26px;
+      font-size: 15px;
       font-weight: 700;
       background: var(--green-700);
       color: white;
@@ -141,58 +141,6 @@
 
     .install-btn:hover { background: var(--green-900); }
     .install-btn:active { transform: scale(0.97); }
-
-    /* Dialog */
-    .dialog-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 999;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .dialog-overlay.open { display: flex; }
-
-    .dialog {
-      background: var(--white);
-      border-radius: 24px;
-      padding: 48px 56px;
-      text-align: center;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.18);
-      animation: popIn 0.2s cubic-bezier(.22,.61,.21,1);
-    }
-
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.88); }
-      to   { opacity: 1; transform: none; }
-    }
-
-    .dialog-check { font-size: 52px; margin-bottom: 14px; }
-
-    .dialog h2 {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--green-700);
-      letter-spacing: -0.5px;
-    }
-
-    .dialog-close {
-      display: inline-block;
-      margin-top: 24px;
-      background: var(--green-700);
-      color: white;
-      border: none;
-      border-radius: 999px;
-      padding: 10px 28px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .dialog-close:hover { background: var(--green-900); }
 
     /* Info box */
     .info-box {
@@ -220,19 +168,10 @@
     @media (max-width: 600px) {
       .scripts-grid { grid-template-columns: 1fr; }
       header h1 { font-size: 24px; }
-      .dialog { padding: 40px 32px; }
     }
   </style>
 </head>
 <body>
-
-  <div class="dialog-overlay" id="dialog">
-    <div class="dialog">
-      <div class="dialog-check">✅</div>
-      <h2>Installed</h2>
-      <button class="dialog-close" onclick="closeDialog()">OK</button>
-    </div>
-  </div>
 
   <header>
     <div class="header-logo">🦍</div>
@@ -263,7 +202,7 @@
             <span class="tag">shopping</span>
             <span class="tag">nike</span>
           </div>
-          <a class="install-btn" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/user_script.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/user_script.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -286,7 +225,7 @@
             <span class="tag">pdf</span>
             <span class="tag">productivity</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/394854/PDF-Anywhere.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/394854/PDF-Anywhere.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -304,7 +243,7 @@
             <span class="tag">youtube</span>
             <span class="tag">ui</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/436141/Return%20YouTube%20Dislike.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/436141/Return%20YouTube%20Dislike.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -322,7 +261,7 @@
             <span class="tag">youtube</span>
             <span class="tag">skip</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/453813/SponsorBlock.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/453813/SponsorBlock.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -340,7 +279,7 @@
             <span class="tag">translate</span>
             <span class="tag">language</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/375513/Google-Translate.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/375513/Google-Translate.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -358,7 +297,7 @@
             <span class="tag">amazon</span>
             <span class="tag">shopping</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/468916/Amazon-Price-History.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/468916/Amazon-Price-History.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -376,7 +315,7 @@
             <span class="tag">privacy</span>
             <span class="tag">clean</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/433335/Autoconsent.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/433335/Autoconsent.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -394,7 +333,7 @@
             <span class="tag">images</span>
             <span class="tag">download</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/27191/Image-Downloader-Pro.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/27191/Image-Downloader-Pro.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -412,7 +351,7 @@
             <span class="tag">youtube</span>
             <span class="tag">clean</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/425160/YouTube---Hide-Shorts.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/425160/YouTube---Hide-Shorts.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -430,7 +369,7 @@
             <span class="tag">dark mode</span>
             <span class="tag">ui</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/12250/Midnight-Lizard-Everywhere.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/12250/Midnight-Lizard-Everywhere.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -448,7 +387,7 @@
             <span class="tag">privacy</span>
             <span class="tag">links</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/15857/Direct-links-out.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/15857/Direct-links-out.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -466,7 +405,7 @@
             <span class="tag">browsing</span>
             <span class="tag">ux</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/29535/Infinite-Scroll-Load-More.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/29535/Infinite-Scroll-Load-More.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -484,7 +423,7 @@
             <span class="tag">writing</span>
             <span class="tag">grammar</span>
           </div>
-          <a class="install-btn" href="https://update.greasyfork.org/scripts/412178/Grammarly-Lite.user.js" target="_blank" onclick="showDialog()">🦍 Install</a>
+          <a class="install-btn" href="https://update.greasyfork.org/scripts/412178/Grammarly-Lite.user.js" target="_blank">🦍 Install</a>
         </div>
       </div>
 
@@ -504,23 +443,6 @@
     TamperGorilla Script Library · <a href="https://github.com/Miroslav-savic/tampergorilla" style="color:inherit">GitHub</a>
   </footer>
 
-  <script>
-    function showDialog() {
-      document.getElementById('dialog').classList.add('open');
-    }
-
-    function closeDialog() {
-      document.getElementById('dialog').classList.remove('open');
-    }
-
-    document.getElementById('dialog').addEventListener('click', function(e) {
-      if (e.target === this) closeDialog();
-    });
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeDialog();
-    });
-  </script>
 
 </body>
 </html>
