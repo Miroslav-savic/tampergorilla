@@ -246,10 +246,10 @@ body.s-no-ext  .btn-get-ext  { display: inline-flex; align-items: center; gap: 6
 }
 </style>
 
-<!-- Hidden anchor — TamperGorilla content script finds any a[href$=".user.js"]
-     and inserts a 🦍 Install button right after it in the DOM. This wrapper
-     keeps the injected button out of the visual flow. -->
-<div id="tg-hook-wrap" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:visible;opacity:0;pointer-events:none;top:-999px;left:-999px">
+<!-- Hidden container — TamperGorilla finds the .user.js link and injects its
+     Install button right after it. display:none hides both from view while
+     still allowing programmatic .click() on the injected button. -->
+<div id="tg-hook-wrap" aria-hidden="true" style="display:none">
   <a id="tg-link" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/nike_discovery.user.js" tabindex="-1"></a>
 </div>
 
@@ -300,7 +300,8 @@ body.s-no-ext  .btn-get-ext  { display: inline-flex; align-items: center; gap: 6
 (function () {
   'use strict';
 
-  var TIMEOUT_MS = 3500;
+  var POLL_MS    = 150;  // check every 150ms
+  var TIMEOUT_MS = 4000; // give up after 4s
 
   var body = document.body;
   var sh   = document.getElementById('sh');
@@ -309,64 +310,79 @@ body.s-no-ext  .btn-get-ext  { display: inline-flex; align-items: center; gap: 6
 
   var detected = false;
   var done     = false;
+  var pollTimer, timeoutTimer;
 
-  function set(state, headline, body_text) {
+  function setState(state, headline, bodyText) {
     body.className = 's-' + state;
     sh.textContent = headline;
-    sb.textContent = body_text;
+    sb.textContent = bodyText;
   }
 
-  set('detecting', 'Detecting extension…', 'Looking for TamperGorilla in your browser');
+  setState('detecting', 'Detecting extension…', 'Looking for TamperGorilla in your browser');
 
-  /* Watch the injected button's text for outcome */
+  /* Poll the injected button for install outcome */
   function watchButton(btn) {
-    var poll = setInterval(function () {
-      if (done) { clearInterval(poll); return; }
+    var watcher = setInterval(function () {
+      if (done) { clearInterval(watcher); return; }
       var t = btn.textContent || '';
       if (t.indexOf('✅') !== -1 || t.indexOf('Installed') !== -1) {
         done = true;
-        clearInterval(poll);
-        set('success', 'You\'re all set!',
-            'Nike Discovery is active. Visit Nike.com and it'll open Amazon results automatically.');
+        clearInterval(watcher);
+        setState('success', 'You\'re all set!',
+          'Nike Discovery is active. Visit Nike.com and it’ll surface Amazon results automatically.');
       } else if (t.indexOf('❌') !== -1 || t.indexOf('Error') !== -1) {
         done = true;
-        clearInterval(poll);
-        set('error', 'Installation failed',
-            'Couldn\'t fetch the script from GitHub. Try installing it manually.');
+        clearInterval(watcher);
+        setState('error', 'Installation failed',
+          'Script could not be fetched from GitHub. Try installing manually.');
       }
-    }, 250);
+    }, POLL_MS);
   }
 
-  /* Try to find + click the TamperGorilla button */
+  /* Find the button TamperGorilla injected next to our link */
+  function findTgButton() {
+    /* Primary: check direct next sibling inside the display:none wrapper */
+    var sibling = link.nextElementSibling;
+    if (sibling && sibling.tagName === 'BUTTON') return sibling;
+
+    /* Fallback: search all buttons on the page for TamperGorilla's marker */
+    var all = document.querySelectorAll('button');
+    for (var i = 0; i < all.length; i++) {
+      var t = all[i].textContent || '';
+      if (t.indexOf('🦍') !== -1) return all[i];
+    }
+    return null;
+  }
+
   function attempt() {
     if (done) return true;
-    var next = link.nextElementSibling;
-    if (next && next.tagName === 'BUTTON' && (next.textContent.indexOf('🦍') !== -1 || next.textContent.indexOf('Install') !== -1)) {
-      detected = true;
-      set('installing', 'Installing…', 'Nike Discovery is being added to your browser');
-      next.click();
-      watchButton(next);
-      return true;
+    var btn = findTgButton();
+    if (!btn) return false;
+
+    detected = true;
+    clearInterval(pollTimer);
+    clearTimeout(timeoutTimer);
+    setState('installing', 'Installing…', 'Nike Discovery is being added to your browser');
+    btn.click();
+    watchButton(btn);
+    return true;
+  }
+
+  /* Poll until button appears or timeout */
+  pollTimer = setInterval(function () {
+    if (attempt()) clearInterval(pollTimer);
+  }, POLL_MS);
+
+  /* Try immediately too — in case content script already ran */
+  attempt();
+
+  /* Give up after TIMEOUT_MS if extension never detected */
+  timeoutTimer = setTimeout(function () {
+    if (!detected) {
+      clearInterval(pollTimer);
+      setState('no-ext', 'Extension not found',
+        'Install TamperGorilla first, then reload this page — the script will install automatically.');
     }
-    return false;
-  }
-
-  if (!attempt()) {
-    /* Watch for the button to be injected */
-    var mo = new MutationObserver(function () {
-      if (attempt()) mo.disconnect();
-    });
-    /* Observe the wrapper and also the document body (content script inserts after the <a>) */
-    mo.observe(document.body, { childList: true, subtree: true });
-
-    /* Fallback: extension not installed */
-    setTimeout(function () {
-      if (!detected) {
-        mo.disconnect();
-        set('no-ext', 'Extension not found',
-            'Install TamperGorilla first, then reload this page — the script will install automatically.');
-      }
-    }, TIMEOUT_MS);
-  }
+  }, TIMEOUT_MS);
 })();
 </script>
