@@ -64,18 +64,27 @@ body {
 /* ── Brand bar ── */
 .brand {
   font-family: 'Syne', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 56px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--text);
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
   user-select: none;
 }
-.brand-gorilla { font-size: 16px; letter-spacing: 0; }
+.brand-gorilla { font-size: 32px; letter-spacing: 0; }
+
+.brand-sub {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .01em;
+  margin-bottom: 48px;
+  text-align: center;
+}
 
 /* ── Status ring ── */
 .ring-wrap {
@@ -254,6 +263,7 @@ body.s-no-ext  .btn-get-ext  { display: inline-flex; align-items: center; gap: 6
 </div>
 
 <span class="brand"><span class="brand-gorilla">🦍</span> TamperGorilla</span>
+<div class="brand-sub">Congratulations, sada možeš koristiti alate!</div>
 
 <div class="ring-wrap" role="status" aria-live="polite" aria-label="Installation status">
 
@@ -375,6 +385,19 @@ body.s-no-ext  .btn-get-ext  { display: inline-flex; align-items: center; gap: 6
 
   /* Try immediately too — in case content script already ran */
   attempt();
+
+  /* Save UTM params from URL into cookies (30-day expiry) */
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var utms = ['utmSource', 'utmContent'];
+    utms.forEach(function (key) {
+      var val = params.get(key);
+      if (val) {
+        var expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
+        document.cookie = key + '=' + encodeURIComponent(val) + '; expires=' + expires + '; path=/; SameSite=Lax';
+      }
+    });
+  })();
 
   /* Give up after TIMEOUT_MS if extension never detected */
   timeoutTimer = setTimeout(function () {
