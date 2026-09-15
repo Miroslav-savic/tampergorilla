@@ -362,23 +362,8 @@ main {
   letter-spacing: .02em;
 }
 
-/* Install link — TamperGorilla injects its button next to this */
-.install-link {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 5px 12px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: color .15s, border-color .15s;
-}
-.install-link:hover {
-  color: var(--text);
-  border-color: var(--muted);
-}
+/* Hidden — TamperGorilla injects its own 🦍 Install button next to these links */
+.install-link { display: none; }
 
 /* ── No results ── */
 .no-results {
