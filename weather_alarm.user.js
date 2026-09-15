@@ -397,13 +397,12 @@
         var lat = GM_getValue('va_lat', null);
         var lon = GM_getValue('va_lon', null);
 
-        if (lat !== null && lon !== null) {
-            var url = 'https://www.windy.com/?rain,' + lat.toFixed(4) + ',' + lon.toFixed(4) + ',10';
-            GM_openInTab(url, { active: true });
-        } else {
-            // Koordinate još nisu keširana — otvori Windy bez lokacije
-            GM_openInTab('https://www.windy.com/', { active: true });
-        }
+        var url = (lat !== null && lon !== null)
+            ? 'https://www.windy.com/?rain,' + lat.toFixed(4) + ',' + lon.toFixed(4) + ',10'
+            : 'https://www.windy.com/';
+
+        // Direktna navigacija — pouzdanija od GM_openInTab na search stranicama
+        window.location.href = url;
         return true;
     }
 
