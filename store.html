@@ -1,0 +1,725 @@
+<title>TamperGorilla Scripts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
+
+<style>
+/* ── Tokens ── */
+:root {
+  --forest:   #0e2317;
+  --pine:     #1a472a;
+  --mint:     #22c55e;
+  --mint-lo:  rgba(34,197,94,.1);
+  --bg:       #f4f7f5;
+  --card:     #ffffff;
+  --text:     #111c16;
+  --sub:      #3d5c47;
+  --muted:    #607a6a;
+  --border:   #d4e3d9;
+  --tag-bg:   #eaf4ee;
+  --tag-text: #2a6640;
+  --radius:   14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:       #0a1410;
+    --card:     #0f1e14;
+    --text:     #ddeee3;
+    --sub:      #7aab88;
+    --muted:    #4e7a5e;
+    --border:   #1a3025;
+    --tag-bg:   #0d2018;
+    --tag-text: #4dbb72;
+    --mint:     #2ed672;
+    --mint-lo:  rgba(46,214,114,.08);
+  }
+}
+:root[data-theme="dark"] {
+  --bg:       #0a1410;
+  --card:     #0f1e14;
+  --text:     #ddeee3;
+  --sub:      #7aab88;
+  --muted:    #4e7a5e;
+  --border:   #1a3025;
+  --tag-bg:   #0d2018;
+  --tag-text: #4dbb72;
+  --mint:     #2ed672;
+  --mint-lo:  rgba(46,214,114,.08);
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--forest);
+  padding: 56px 24px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Giant watermark gorilla */
+.site-header::before {
+  content: '🦍';
+  position: absolute;
+  font-size: 320px;
+  line-height: 1;
+  right: -40px;
+  top: -60px;
+  opacity: .045;
+  pointer-events: none;
+  user-select: none;
+}
+
+.header-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 20px;
+}
+.header-brand-gorilla { font-size: 18px; letter-spacing: 0; }
+
+.header-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 5vw, 46px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  margin-bottom: 12px;
+}
+
+.header-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* Search */
+.search-wrap {
+  position: relative;
+  max-width: 440px;
+  margin: 0 auto 24px;
+}
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,.35);
+  font-size: 15px;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: 13px 16px 13px 44px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #fff;
+  outline: none;
+  transition: border-color .2s, background .2s;
+}
+.search-input::placeholder { color: rgba(255,255,255,.35); }
+.search-input:focus {
+  border-color: var(--mint);
+  background: rgba(255,255,255,.14);
+}
+
+.header-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255,255,255,.35);
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+.header-stats-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  opacity: .8;
+}
+
+/* ── Category nav ── */
+.cat-nav-wrap {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.cat-nav {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.cat-nav::-webkit-scrollbar { display: none; }
+
+.cat-btn {
+  flex-shrink: 0;
+  padding: 14px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.cat-btn:hover { color: var(--text); }
+.cat-btn.active {
+  color: var(--mint);
+  border-bottom-color: var(--mint);
+}
+.cat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  margin-left: 5px;
+  font-variant-numeric: tabular-nums;
+}
+.cat-btn.active .cat-count {
+  background: var(--mint-lo);
+  color: var(--mint);
+}
+
+/* ── Main content ── */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* Section label */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Script grid ── */
+.scripts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media (max-width: 900px) { .scripts-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .scripts-grid { grid-template-columns: 1fr; } }
+
+/* ── Script card ── */
+.script-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow .15s, border-color .15s, transform .15s;
+}
+.script-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,.09);
+  border-color: var(--mint);
+  transform: translateY(-2px);
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--tag-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.card-title-area { flex: 1; min-width: 0; }
+
+.card-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-source {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.source-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+.source-badge.mine {
+  background: var(--mint-lo);
+  color: var(--mint);
+}
+.source-badge.fork {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+}
+
+.card-desc {
+  font-size: 13px;
+  color: var(--sub);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.card-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  letter-spacing: .02em;
+}
+
+/* Install link — TamperGorilla injects its button next to this */
+.install-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color .15s, border-color .15s;
+}
+.install-link:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+/* ── No results ── */
+.no-results {
+  display: none;
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
+.no-results-icon { font-size: 40px; margin-bottom: 12px; }
+.no-results-text { font-size: 15px; }
+
+/* ── How it works strip ── */
+.how-strip {
+  margin-top: 64px;
+  background: var(--forest);
+  border-radius: 16px;
+  padding: 36px 40px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  overflow: hidden;
+  position: relative;
+}
+.how-strip::after {
+  content: '🦍';
+  position: absolute;
+  right: -10px;
+  bottom: -30px;
+  font-size: 120px;
+  opacity: .06;
+  pointer-events: none;
+}
+.how-strip-icon { font-size: 36px; flex-shrink: 0; }
+.how-strip-text h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.how-strip-text p {
+  font-size: 13px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.65;
+  max-width: 520px;
+}
+.how-strip-text strong { color: rgba(255,255,255,.8); }
+
+@media (max-width: 600px) {
+  .how-strip { flex-direction: column; gap: 16px; padding: 28px 24px; }
+}
+
+/* ── Footer ── */
+.site-footer {
+  text-align: center;
+  padding: 28px 24px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+.site-footer a { color: inherit; text-underline-offset: 3px; }
+</style>
+
+<!-- ════════════════════════════════════════════ HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="header-brand-gorilla">🦍</span> TamperGorilla
+    </div>
+    <h1 class="header-title">Script Library</h1>
+    <p class="header-sub">Curated userscripts for a better browsing experience.<br>One click to install — no fuss.</p>
+
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="search" type="search" placeholder="Search scripts…" autocomplete="off">
+    </div>
+
+    <div class="header-stats">
+      <span class="header-stats-dot"></span>
+      <span id="stats-label">9 scripts available</span>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════ CATEGORY NAV -->
+<nav class="cat-nav-wrap" aria-label="Categories">
+  <div class="cat-nav">
+    <button class="cat-btn active" data-cat="all">All <span class="cat-count" id="cnt-all">9</span></button>
+    <button class="cat-btn" data-cat="youtube">YouTube <span class="cat-count" id="cnt-youtube"></span></button>
+    <button class="cat-btn" data-cat="privacy">Privacy <span class="cat-count" id="cnt-privacy"></span></button>
+    <button class="cat-btn" data-cat="shopping">Shopping <span class="cat-count" id="cnt-shopping"></span></button>
+    <button class="cat-btn" data-cat="ui">UI <span class="cat-count" id="cnt-ui"></span></button>
+    <button class="cat-btn" data-cat="language">Language <span class="cat-count" id="cnt-language"></span></button>
+    <button class="cat-btn" data-cat="weather">Weather <span class="cat-count" id="cnt-weather"></span></button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════ MAIN -->
+<main>
+  <div class="section-label" id="grid-label">Featured</div>
+
+  <div class="scripts-grid" id="grid">
+
+    <div class="script-card" data-tags="shopping,nike" data-name="Nike Discovery" data-desc="Automatically surfaces Nike products on Amazon when you visit Nike.com — find better prices and deals without leaving your flow.">
+      <div class="card-head">
+        <div class="card-icon">👟</div>
+        <div class="card-title-area">
+          <div class="card-name">Nike Discovery</div>
+          <div class="card-source"><span class="source-badge mine">Original</span> by Miroslav Savić</div>
+        </div>
+      </div>
+      <div class="card-desc">Automatically surfaces Nike products on Amazon when you visit Nike.com — find better prices and deals without leaving your flow.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">shopping</span><span class="tag">nike</span></div>
+        <a class="install-link" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/nike_discovery.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="youtube,ui" data-name="Return YouTube Dislike" data-desc="Brings back the dislike count on YouTube videos using archived data and user reports.">
+      <div class="card-head">
+        <div class="card-icon">👎</div>
+        <div class="card-title-area">
+          <div class="card-name">Return YouTube Dislike</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Brings back the dislike count on YouTube videos using archived data and user reports.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">youtube</span><span class="tag">ui</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/436141/Return%20YouTube%20Dislike.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="youtube,skip" data-name="SponsorBlock for YouTube" data-desc="Skip sponsorships, intros, outros and filler segments in YouTube videos automatically.">
+      <div class="card-head">
+        <div class="card-icon">⏭</div>
+        <div class="card-title-area">
+          <div class="card-name">SponsorBlock for YouTube</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Skip sponsorships, intros, outros and filler segments in YouTube videos automatically.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">youtube</span><span class="tag">skip</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/453813/SponsorBlock.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="privacy,clean" data-name="Autoconsent Cookie Banners" data-desc="Automatically dismisses GDPR cookie banners and consent dialogs across thousands of sites.">
+      <div class="card-head">
+        <div class="card-icon">🍪</div>
+        <div class="card-title-area">
+          <div class="card-name">Autoconsent — Cookies</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Automatically dismisses GDPR cookie banners and consent dialogs across thousands of sites.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">privacy</span><span class="tag">clean</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/433335/Autoconsent.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="youtube,clean" data-name="YouTube Hide Shorts" data-desc="Removes YouTube Shorts from home feed, subscriptions, search results and sidebar.">
+      <div class="card-head">
+        <div class="card-icon">🩳</div>
+        <div class="card-title-area">
+          <div class="card-name">YouTube — Hide Shorts</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Removes YouTube Shorts from home feed, subscriptions, search results and sidebar.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">youtube</span><span class="tag">clean</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/425160/YouTube---Hide-Shorts.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="ui,dark mode" data-name="Midnight Lizard dark mode" data-desc="Applies dark color scheme to any webpage — customisable colors, contrast and brightness.">
+      <div class="card-head">
+        <div class="card-icon">🌙</div>
+        <div class="card-title-area">
+          <div class="card-name">Midnight Lizard</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Applies dark color scheme to any webpage — customisable colors, contrast and brightness.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">dark mode</span><span class="tag">ui</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/12250/Midnight-Lizard-Everywhere.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="privacy,links" data-name="Direct Links Out" data-desc="Removes redirect wrappers from Google, Facebook and other sites — go directly to links.">
+      <div class="card-head">
+        <div class="card-icon">🔗</div>
+        <div class="card-title-area">
+          <div class="card-name">Direct Links Out</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Removes redirect wrappers from Google, Facebook and other sites — go directly to links.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">privacy</span><span class="tag">links</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/15857/Direct-links-out.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="browsing,ux" data-name="Infinite Scroll Load More" data-desc="Adds infinite scroll or a Load More button to paginated sites instead of navigating pages.">
+      <div class="card-head">
+        <div class="card-icon">📜</div>
+        <div class="card-title-area">
+          <div class="card-name">Infinite Scroll — Load More</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Adds infinite scroll or a "Load more" button to paginated sites instead of navigating pages.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">browsing</span><span class="tag">ux</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/29535/Infinite-Scroll-Load-More.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="language,translate" data-name="Google Translate Inline" data-desc="Select any text on any page and instantly translate it in a small popup without opening a new tab.">
+      <div class="card-head">
+        <div class="card-icon">🌐</div>
+        <div class="card-title-area">
+          <div class="card-name">Google Translate Inline</div>
+          <div class="card-source"><span class="source-badge fork">Greasy Fork</span></div>
+        </div>
+      </div>
+      <div class="card-desc">Select any text on any page and instantly translate it in a small popup without opening a new tab.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">translate</span><span class="tag">language</span></div>
+        <a class="install-link" href="https://update.greasyfork.org/scripts/375513/Google-Translate.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="script-card" data-tags="weather,alerts" data-name="Vremenski Alarm weather notifications" data-desc="Tracks local weather every 30 minutes and sends a browser notification when temperature, wind, or rain changes significantly.">
+      <div class="card-head">
+        <div class="card-icon">⛈️</div>
+        <div class="card-title-area">
+          <div class="card-name">Vremenski Alarm</div>
+          <div class="card-source"><span class="source-badge mine">Original</span> by Miroslav Savić</div>
+        </div>
+      </div>
+      <div class="card-desc">Tracks local weather every 30 minutes and sends a browser notification when temperature, wind, or rain changes significantly.</div>
+      <div class="card-foot">
+        <div class="card-tags"><span class="tag">weather</span><span class="tag">alerts</span></div>
+        <a class="install-link" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/weather_alarm.user.js">Install ↗</a>
+      </div>
+    </div>
+
+    <div class="no-results" id="no-results">
+      <div class="no-results-icon">🔍</div>
+      <div class="no-results-text">No scripts match your search.</div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- How it works -->
+  <div class="how-strip">
+    <span class="how-strip-icon">🦍</span>
+    <div class="how-strip-text">
+      <h3>How to install</h3>
+      <p>Install the <strong>TamperGorilla</strong> extension in your browser. Then come back here — a <strong>🦍 Install</strong> button will appear next to each script automatically. One click, done. No configuration needed.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════ FOOTER -->
+<footer class="site-footer">
+  TamperGorilla Script Library ·
+  <a href="https://github.com/Miroslav-savic/tampergorilla">GitHub</a>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var cards = Array.from(document.querySelectorAll('.script-card'));
+  var searchEl = document.getElementById('search');
+  var gridLabel = document.getElementById('grid-label');
+  var noResults = document.getElementById('no-results');
+  var statsLabel = document.getElementById('stats-label');
+  var activeCat = 'all';
+
+  /* Count per category */
+  var catMap = {};
+  cards.forEach(function (c) {
+    (c.dataset.tags || '').split(',').forEach(function (t) {
+      t = t.trim();
+      if (t) catMap[t] = (catMap[t] || 0) + 1;
+    });
+  });
+
+  /* Populate counts in nav */
+  Object.keys(catMap).forEach(function (cat) {
+    var el = document.getElementById('cnt-' + cat);
+    if (el) el.textContent = catMap[cat];
+  });
+  document.getElementById('cnt-all').textContent = cards.length;
+
+  function filter() {
+    var q = searchEl.value.toLowerCase().trim();
+
+    var visible = 0;
+    cards.forEach(function (card) {
+      var tags = card.dataset.tags || '';
+      var name = (card.dataset.name || '').toLowerCase();
+      var desc = (card.dataset.desc || '').toLowerCase();
+
+      var catMatch = activeCat === 'all' || tags.split(',').map(function(t){return t.trim();}).indexOf(activeCat) !== -1;
+      var qMatch   = !q || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1 || tags.indexOf(q) !== -1;
+
+      var show = catMatch && qMatch;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    noResults.style.display = visible === 0 ? 'block' : 'none';
+    statsLabel.textContent = visible + ' script' + (visible !== 1 ? 's' : '') + (activeCat !== 'all' ? ' in category' : ' available');
+
+    var catLabel = activeCat === 'all' ? 'All scripts' : activeCat.charAt(0).toUpperCase() + activeCat.slice(1);
+    gridLabel.textContent = q ? 'Search results' : catLabel;
+  }
+
+  /* Search */
+  searchEl.addEventListener('input', filter);
+
+  /* Category buttons */
+  document.querySelectorAll('.cat-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.cat-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat;
+      filter();
+    });
+  });
+
+  filter();
+})();
+</script>
