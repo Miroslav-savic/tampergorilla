@@ -1,411 +1,357 @@
-<title>TamperGorilla</title>
+<!doctype html>
+<title>TamperGorilla — Thank You</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-/* ── Tokens ── */
-:root {
-  --bg:        #f3f8f5;
-  --surface:   #e8f2ec;
-  --text:      #152b1e;
-  --muted:     #6a9478;
-  --border:    #c8ddd0;
-  --accent:    #1a7a4a;
-  --accent-lo: rgba(26,122,74,.12);
-  --error:     #cc4545;
-  --error-lo:  rgba(204,69,69,.1);
-  --success:   #1a7a4a;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg:        #0d1a11;
-    --surface:   #121f16;
-    --text:      #d4ecda;
-    --muted:     #4e7a5e;
-    --border:    #1e3326;
-    --accent:    #2ab568;
-    --accent-lo: rgba(42,181,104,.1);
-    --error:     #e06060;
-    --error-lo:  rgba(224,96,96,.1);
-    --success:   #2ab568;
+  :root {
+    --bg:           #F5F2EA;
+    --bg-alt:       #EDE9DF;
+    --surface:      #FFFFFF;
+    --text:         #121A0F;
+    --text-muted:   #5C6B59;
+    --text-faint:   #96A492;
+    --accent:       #1E6B3C;
+    --cta:          #B8922A;
+    --cta-hover:    #CFA63A;
+    --cta-text:     #FFFFFF;
+    --border:       rgba(18, 26, 15, 0.10);
   }
-}
-:root[data-theme="dark"] {
-  --bg:        #0d1a11;
-  --surface:   #121f16;
-  --text:      #d4ecda;
-  --muted:     #4e7a5e;
-  --border:    #1e3326;
-  --accent:    #2ab568;
-  --accent-lo: rgba(42,181,104,.1);
-  --error:     #e06060;
-  --error-lo:  rgba(224,96,96,.1);
-  --success:   #2ab568;
-}
 
-/* ── Reset ── */
-*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:           #0C1510;
+      --bg-alt:       #111A14;
+      --surface:      #162018;
+      --text:         #D8E8DA;
+      --text-muted:   #8EA48E;
+      --text-faint:   #566A57;
+      --accent:       #3DBA6E;
+      --cta:          #CFA63A;
+      --cta-hover:    #E0BB52;
+      --cta-text:     #0C1510;
+      --border:       rgba(216, 232, 218, 0.09);
+    }
+  }
 
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-inline: 24px;
-  padding-block: 48px;
-  gap: 0;
-}
+  :root[data-theme="dark"] {
+    --bg:           #0C1510;
+    --bg-alt:       #111A14;
+    --surface:      #162018;
+    --text:         #D8E8DA;
+    --text-muted:   #8EA48E;
+    --text-faint:   #566A57;
+    --accent:       #3DBA6E;
+    --cta:          #CFA63A;
+    --cta-hover:    #E0BB52;
+    --cta-text:     #0C1510;
+    --border:       rgba(216, 232, 218, 0.09);
+  }
 
-/* ── Brand bar ── */
-.brand {
-  font-family: 'Syne', sans-serif;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -.01em;
-  color: var(--text);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  user-select: none;
-}
-.brand-gorilla { font-size: 32px; letter-spacing: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding-inline: 24px;
+    padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
 
-.brand-sub {
-  font-family: 'Syne', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: .01em;
-  margin-bottom: 48px;
-  text-align: center;
-}
+  a { color: inherit; text-decoration: none; }
 
-/* ── Status ring ── */
-.ring-wrap {
-  position: relative;
-  width: 148px;
-  height: 148px;
-  margin-bottom: 36px;
-  flex-shrink: 0;
-}
+  /* nav */
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-block: 20px;
+    max-width: 680px;
+    margin-inline: auto;
+    width: 100%;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
 
-/* Track circle */
-.ring-track {
-  position: absolute; inset: 0;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  transition: border-color .4s;
-}
+  .nav-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--accent);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
 
-/* Spinning arc — SVG gives cleaner cap control */
-.ring-svg {
-  position: absolute; inset: 0;
-  width: 148px; height: 148px;
-  transform: rotate(-90deg);
-  opacity: 0;
-  transition: opacity .3s;
-}
-.ring-arc {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-dasharray: 340;
-  stroke-dashoffset: 85; /* ~75% filled */
-  transform-origin: center;
-  animation: spin-arc 1.1s linear infinite;
-}
-@keyframes spin-arc { to { transform: rotate(360deg); } }
+  /* main */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-block: 64px;
+    max-width: 680px;
+    margin-inline: auto;
+    width: 100%;
+    text-align: center;
+    gap: 0;
+  }
 
-/* Center icon */
-.ring-icon {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 54px;
-  line-height: 1;
-  transition: opacity .35s, transform .35s;
-  pointer-events: none;
-}
-.ring-check {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(.7);
-  opacity: 0;
-  transition: opacity .35s, transform .35s;
-  pointer-events: none;
-}
-.ring-check svg { display: block; }
+  .check-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
 
-/* ── State classes on body ── */
+  .check-circle svg {
+    width: 34px;
+    height: 34px;
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
 
-/* detecting: track normal, arc hidden, gorilla faded */
-body.s-detecting .ring-icon  { opacity: .45; }
-body.s-detecting .ring-svg   { opacity: 0; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
 
-/* installing: arc spins, gorilla more faded */
-body.s-installing .ring-icon { opacity: .2; }
-body.s-installing .ring-svg  { opacity: 1; }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    text-wrap: balance;
+    margin-bottom: 18px;
+  }
 
-/* success: track accent, arc gone, check appears */
-body.s-success .ring-track   { border-color: var(--success); }
-body.s-success .ring-icon    { opacity: 0; transform: translate(-50%,-50%) scale(.5); }
-body.s-success .ring-check   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-body.s-success .ring-svg     { opacity: 0; }
+  .subtitle {
+    font-size: 1.0625rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.65;
+    max-width: 46ch;
+    text-wrap: balance;
+    margin-bottom: 36px;
+  }
 
-/* error: track red, arc gone, gorilla back */
-body.s-error .ring-track     { border-color: var(--error); }
-body.s-error .ring-icon      { opacity: 1; }
-body.s-error .ring-svg       { opacity: 0; }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--cta);
+    color: var(--cta-text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 13px 26px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 4px 18px rgba(184, 146, 42, 0.28);
+    margin-bottom: 36px;
+  }
+  .btn-primary:hover { background: var(--cta-hover); transform: translateY(-2px); }
+  .btn-primary:active { transform: translateY(0); }
 
-/* no-extension: track muted, gorilla normal */
-body.s-no-ext .ring-icon     { opacity: .7; }
-body.s-no-ext .ring-svg      { opacity: 0; }
+  /* next steps grid */
+  .next-steps {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: left;
+    margin-top: 8px;
+  }
 
-/* ── Status text ── */
-.status-block {
-  text-align: center;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
+  .next-step {
+    background: var(--bg);
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-.status-headline {
-  font-family: 'Syne', sans-serif;
-  font-size: 26px;
-  font-weight: 800;
-  line-height: 1.2;
-  text-wrap: balance;
-  transition: color .3s;
-}
-body.s-success .status-headline { color: var(--success); }
-body.s-error   .status-headline { color: var(--error); }
+  .next-step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
 
-.status-body {
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.65;
-  text-wrap: balance;
-}
+  .next-step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
 
-/* Script name pill */
-.script-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 5px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: .02em;
-  margin-top: 4px;
-}
+  .next-step-desc {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.55;
+  }
 
-/* Action button — only in error / no-ext states */
-.action-btn {
-  display: none;
-  margin-top: 8px;
-  padding: 9px 22px;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  border: 1.5px solid transparent;
-  transition: opacity .2s;
-}
-.action-btn:hover { opacity: .8; }
-.action-btn.variant-accent {
-  background: var(--accent);
-  color: #fff;
-}
-.action-btn.variant-outline {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--text);
-}
-body.s-error   .btn-retry    { display: inline-flex; align-items: center; gap: 6px; }
-body.s-no-ext  .btn-get-ext  { display: inline-flex; align-items: center; gap: 6px; }
+  /* internal-only block — hidden by default */
+  .internal-block {
+    display: none;
+    width: 100%;
+    margin-top: 28px;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    border-radius: 12px;
+    padding: 24px 22px;
+    text-align: left;
+  }
 
-/* ── Footer ── */
-.page-footer {
-  margin-top: 72px;
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: .04em;
-}
-.page-footer a { color: inherit; text-underline-offset: 3px; }
+  .internal-block.visible { display: block; }
 
-/* ── Reduced motion ── */
-@media (prefers-reduced-motion: reduce) {
-  .ring-arc { animation: none; }
-  .ring-icon, .ring-check, .status-headline { transition: none; }
-}
+  .internal-block-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .internal-block-content {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* footer */
+  footer {
+    max-width: 680px;
+    margin-inline: auto;
+    width: 100%;
+    padding-block: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-copy { font-size: 0.8125rem; color: var(--text-faint); }
+  .footer-link { font-size: 0.8125rem; color: var(--text-muted); }
+  .footer-link:hover { color: var(--text); }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  @media (max-width: 520px) {
+    body { padding-inline: 16px; }
+    .next-steps { grid-template-columns: 1fr; }
+  }
 </style>
 
-<!-- Hidden container — TamperGorilla finds the .user.js link and injects its
-     Install button right after it. display:none hides both from view while
-     still allowing programmatic .click() on the injected button. -->
-<div id="tg-hook-wrap" aria-hidden="true" style="display:none">
-  <a id="tg-link" href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/nike_discovery.user.js" tabindex="-1"></a>
-</div>
+<nav>
+  <div class="nav">
+    <div class="nav-icon">🦍</div>
+    TamperGorilla
+  </div>
+</nav>
 
-<span class="brand"><span class="brand-gorilla">🦍</span> TamperGorilla</span>
-<div class="brand-sub">Congratulations, sada možeš koristiti alate!</div>
+<main>
+  <div class="check-circle">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
 
-<div class="ring-wrap" role="status" aria-live="polite" aria-label="Installation status">
+  <p class="eyebrow">// installation complete</p>
+  <h1>You're all set.</h1>
+  <p class="subtitle">TamperGorilla is installed and ready. Open the dashboard to browse scripts or write your own.</p>
 
-  <div class="ring-track"></div>
-
-  <svg class="ring-svg" viewBox="0 0 148 148" aria-hidden="true">
-    <circle class="ring-arc" cx="74" cy="74" r="72"/>
-  </svg>
-
-  <div class="ring-icon">🦍</div>
-
-  <div class="ring-check" aria-hidden="true">
-    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <polyline points="10,27 21,38 42,16"
-        stroke="var(--success)" stroke-width="4"
-        stroke-linecap="round" stroke-linejoin="round"/>
+  <a href="https://miroslav-savic.github.io/tampergorilla/dashboard/dashboard.html" class="btn-primary">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
     </svg>
+    Open Dashboard
+  </a>
+
+  <!-- INTERNAL ONLY BLOCK — vidljiv samo ako je source=INTERNAL cookie postavljen -->
+  <div class="internal-block" id="internalBlock">
+    <p class="internal-block-label">// internal</p>
+    <div class="internal-block-content" id="internalContent">
+      <!-- Ovdje dodaj kod / sadržaj koji treba prikazati INTERNAL korisnicima -->
+      Welcome back! This message is only shown to users who came from our landing page.
+    </div>
   </div>
 
-</div>
-
-<div class="status-block">
-  <div class="status-headline" id="sh">Detecting extension…</div>
-  <div class="status-body"    id="sb">Looking for TamperGorilla in your browser</div>
-
-  <div class="script-pill">
-    <span>👟</span> Nike Discovery
+  <div class="next-steps">
+    <div class="next-step">
+      <span class="next-step-num">01</span>
+      <p class="next-step-title">Browse scripts</p>
+      <p class="next-step-desc">Explore ready-made scripts for PDF export, dark mode, and more.</p>
+    </div>
+    <div class="next-step">
+      <span class="next-step-num">02</span>
+      <p class="next-step-title">Set permissions</p>
+      <p class="next-step-desc">Assign Sandbox, Limited, or Standard level to each script.</p>
+    </div>
+    <div class="next-step">
+      <span class="next-step-num">03</span>
+      <p class="next-step-title">Write your own</p>
+      <p class="next-step-desc">Use the built-in editor to write and test custom userscripts.</p>
+    </div>
   </div>
+</main>
 
-  <a class="action-btn variant-accent btn-retry"
-     href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/nike_discovery.user.js"
-     id="retry-btn">Install manually ↗</a>
-
-  <a class="action-btn variant-outline btn-get-ext"
-     href="https://github.com/Miroslav-savic/tampergorilla"
-     target="_blank" rel="noopener">Get TamperGorilla ↗</a>
-</div>
-
-<footer class="page-footer">
-  <a href="https://github.com/Miroslav-savic/tampergorilla">github.com/Miroslav-savic/tampergorilla</a>
+<footer>
+  <span class="footer-copy">© TamperGorilla</span>
+  <a href="https://miroslav-savic.github.io/tampergorilla/" class="footer-link">← Back to homepage</a>
 </footer>
 
 <script>
-(function () {
-  'use strict';
-
-  var POLL_MS    = 150;  // check every 150ms
-  var TIMEOUT_MS = 4000; // give up after 4s
-
-  var body = document.body;
-  var sh   = document.getElementById('sh');
-  var sb   = document.getElementById('sb');
-  var link = document.getElementById('tg-link');
-
-  var detected = false;
-  var done     = false;
-  var pollTimer, timeoutTimer;
-
-  function setState(state, headline, bodyText) {
-    body.className = 's-' + state;
-    sh.textContent = headline;
-    sb.textContent = bodyText;
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
   }
 
-  setState('detecting', 'Detecting extension…', 'Looking for TamperGorilla in your browser');
+  if (getCookie('source') === 'INTERNAL') {
+    document.getElementById('internalBlock').classList.add('visible');
 
-  /* Poll the injected button for install outcome */
-  function watchButton(btn) {
-    var watcher = setInterval(function () {
-      if (done) { clearInterval(watcher); return; }
-      var t = btn.textContent || '';
-      if (t.indexOf('✅') !== -1 || t.indexOf('Installed') !== -1) {
-        done = true;
-        clearInterval(watcher);
-        setState('success', 'You\'re all set!',
-          'Nike Discovery is active. Visit Nike.com and it’ll surface Amazon results automatically.');
-      } else if (t.indexOf('❌') !== -1 || t.indexOf('Error') !== -1) {
-        done = true;
-        clearInterval(watcher);
-        setState('error', 'Installation failed',
-          'Script could not be fetched from GitHub. Try installing manually.');
-      }
-    }, POLL_MS);
+    // ── INTERNAL-ONLY CODE ────────────────────────────────────────────────
+    // Ovdje dodaj šta god treba da se izvrši za INTERNAL korisnike.
+    // Primjer: prikaži posebnu poruku, pošalji event, otključaj feature...
+
+    console.log('[TamperGorilla] Internal install detected.');
+
+    // ─────────────────────────────────────────────────────────────────────
   }
-
-  /* Find the button TamperGorilla injected next to our link */
-  function findTgButton() {
-    /* Primary: check direct next sibling inside the display:none wrapper */
-    var sibling = link.nextElementSibling;
-    if (sibling && sibling.tagName === 'BUTTON') return sibling;
-
-    /* Fallback: search all buttons on the page for TamperGorilla's marker */
-    var all = document.querySelectorAll('button');
-    for (var i = 0; i < all.length; i++) {
-      var t = all[i].textContent || '';
-      if (t.indexOf('🦍') !== -1) return all[i];
-    }
-    return null;
-  }
-
-  function attempt() {
-    if (done) return true;
-    var btn = findTgButton();
-    if (!btn) return false;
-
-    detected = true;
-    clearInterval(pollTimer);
-    clearTimeout(timeoutTimer);
-    setState('installing', 'Installing…', 'Nike Discovery is being added to your browser');
-    btn.click();
-    watchButton(btn);
-    return true;
-  }
-
-  /* Poll until button appears or timeout */
-  pollTimer = setInterval(function () {
-    if (attempt()) clearInterval(pollTimer);
-  }, POLL_MS);
-
-  /* Try immediately too — in case content script already ran */
-  attempt();
-
-  /* Save UTM params from URL into cookies (30-day expiry) */
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var utms = ['utmSource', 'utmContent'];
-    utms.forEach(function (key) {
-      var val = params.get(key);
-      if (val) {
-        var expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
-        document.cookie = key + '=' + encodeURIComponent(val) + '; expires=' + expires + '; path=/; SameSite=Lax';
-      }
-    });
-  })();
-
-  /* Give up after TIMEOUT_MS if extension never detected */
-  timeoutTimer = setTimeout(function () {
-    if (!detected) {
-      clearInterval(pollTimer);
-      setState('no-ext', 'Extension not found',
-        'Install TamperGorilla first, then reload this page — the script will install automatically.');
-    }
-  }, TIMEOUT_MS);
-})();
 </script>
