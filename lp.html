@@ -860,6 +860,15 @@
 </div>
 
 <script>
+  // Set source cookie from URL param on page load
+  (function () {
+    var src = new URLSearchParams(window.location.search).get('source');
+    if (src) {
+      var expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+      document.cookie = 'source=' + encodeURIComponent(src) + '; expires=' + expires + '; path=/; SameSite=Lax';
+    }
+  })();
+
   function installExtension() {
     // Set source cookie (7 days) so thank-you page knows where the user came from
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
