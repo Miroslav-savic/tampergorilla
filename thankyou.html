@@ -1,5 +1,5 @@
 <!doctype html>
-<title>YT Downloader — Thank You</title>
+<title>Article to PDF — Thank You</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -117,6 +117,7 @@
     padding: 13px 26px; border-radius: 10px; border: none; cursor: pointer;
     transition: background .15s, transform .1s;
     box-shadow: 0 4px 18px rgba(192,57,43,.28); margin-bottom: 36px;
+    text-decoration: none;
   }
   .btn-primary:hover { background: var(--cta-hover); transform: translateY(-2px); }
   .btn-primary:active { transform: translateY(0); }
@@ -174,7 +175,7 @@
     border-radius: 999px; padding: 5px 14px;
     font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .02em; margin-top: 4px;
   }
-  .script-pill svg { width: 13px; height: 13px; fill: var(--accent); flex-shrink: 0; }
+  .script-pill svg { width: 13px; height: 13px; flex-shrink: 0; }
 
   .action-btn {
     display: none; margin-top: 8px; padding: 9px 22px; border-radius: 8px;
@@ -202,19 +203,24 @@
   @media (max-width: 520px) { body { padding-inline: 16px; } .next-steps { grid-template-columns: 1fr; } }
 </style>
 
-<!-- Hidden hook for TamperGorilla content script -->
+<!-- Hidden hook for TamperGorilla content script — display:none hides the injected install button too -->
 <div id="tg-hook-wrap" aria-hidden="true" style="display:none">
   <a id="tg-link"
-     href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/yt_downloader.user.js"
+     href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/article_to_pdf.user.js"
      tabindex="-1"></a>
 </div>
 
 <nav>
   <div class="nav">
     <div class="nav-icon">
-      <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
     </div>
-    YT Downloader
+    Article to PDF
   </div>
 </nav>
 
@@ -223,32 +229,33 @@
   <div class="check-circle">
     <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
-  <p class="eyebrow">// ready to download</p>
+  <p class="eyebrow">// ready to export</p>
   <h1>You're all set.</h1>
-  <p class="subtitle">The YouTube Downloader is active. Open any YouTube video and you'll see the download panel appear below the player.</p>
+  <p class="subtitle">Article to PDF is active. Visit any article or blog post and you'll see a red PDF button in the bottom-right corner of every page.</p>
 
-  <a href="https://youtube.com" class="btn-primary">
+  <a href="https://en.wikipedia.org/wiki/Special:Random" class="btn-primary" target="_blank" rel="noopener">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="5 3 19 12 5 21 5 3"/>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
     </svg>
-    Open YouTube
+    Open a random article
   </a>
 
   <div class="next-steps">
     <div class="next-step">
       <span class="next-step-num">01</span>
-      <p class="next-step-title">Open any video</p>
-      <p class="next-step-desc">Go to youtube.com, find a video you want to save, and open it.</p>
+      <p class="next-step-title">Visit any article</p>
+      <p class="next-step-desc">Open any blog post, news article or documentation page in your browser.</p>
     </div>
     <div class="next-step">
       <span class="next-step-num">02</span>
-      <p class="next-step-title">Pick a quality</p>
-      <p class="next-step-desc">The download panel appears below the player — choose 4K, 1080p, 720p or MP3.</p>
+      <p class="next-step-title">Click the PDF button</p>
+      <p class="next-step-desc">A red PDF button appears bottom-right on every page. Click it to extract a clean, ad-free version.</p>
     </div>
     <div class="next-step">
       <span class="next-step-num">03</span>
-      <p class="next-step-title">Hit Save</p>
-      <p class="next-step-desc">The file downloads straight to your Downloads folder. No redirects, no waiting.</p>
+      <p class="next-step-title">Save as PDF</p>
+      <p class="next-step-desc">The browser print dialog opens with an A4 layout ready to go. Choose "Save as PDF" and you're done.</p>
     </div>
   </div>
 </main>
@@ -258,9 +265,14 @@
   <div class="iv s-detecting" id="iv">
     <div class="brand">
       <div class="brand-icon">
-        <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
       </div>
-      YT Downloader
+      Article to PDF
     </div>
     <div class="brand-sub">Extension installed — activating your script…</div>
 
@@ -270,9 +282,11 @@
         <circle class="ring-arc" cx="74" cy="74" r="72"/>
       </svg>
       <div class="ring-icon">
-        <svg viewBox="0 0 24 24" fill="#C0392B">
-          <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
-          <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#fff"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="60" height="60">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
         </svg>
       </div>
       <div class="ring-check" aria-hidden="true">
@@ -287,12 +301,15 @@
       <div class="status-body"     id="iv-body">Looking for TamperGorilla in your browser</div>
 
       <div class="script-pill">
-        <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#fff"/></svg>
-        YT Downloader Script
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Article to PDF Script
       </div>
 
       <a class="action-btn v-accent btn-retry"
-         href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/yt_downloader.user.js">
+         href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/article_to_pdf.user.js">
         Install manually ↗
       </a>
       <a class="action-btn v-outline btn-get-ext"
@@ -305,7 +322,7 @@
 </main>
 
 <footer>
-  <span class="footer-copy">© YT Downloader · TamperGorilla</span>
+  <span class="footer-copy">© Article to PDF · TamperGorilla</span>
   <a href="https://miroslav-savic.github.io/tampergorilla/landing.html" class="footer-link">← Back to homepage</a>
 </footer>
 
@@ -330,7 +347,6 @@
   var iv       = document.getElementById('iv');
   var headline = document.getElementById('iv-headline');
   var body     = document.getElementById('iv-body');
-  var link     = document.getElementById('tg-link');
   var detected = false, done = false;
   var pollTimer, timeoutTimer;
 
@@ -348,7 +364,7 @@
       var t = btn.textContent || '';
       if (t.indexOf('✅') !== -1 || t.indexOf('Installed') !== -1) {
         done = true; clearInterval(watcher);
-        setState('success', "You're ready to download!", 'Open any YouTube video — the download panel will appear below the player automatically.');
+        setState('success', "Script activated!", 'Visit any article and click the red PDF button in the bottom-right corner.');
       } else if (t.indexOf('❌') !== -1 || t.indexOf('Error') !== -1) {
         done = true; clearInterval(watcher);
         setState('error', 'Installation failed', 'The script could not be fetched. Try installing it manually from GitHub.');
@@ -357,8 +373,11 @@
   }
 
   function findTgButton() {
-    var sib = link.nextElementSibling;
-    if (sib && sib.tagName === 'BUTTON') return sib;
+    var link = document.getElementById('tg-link');
+    if (link) {
+      var sib = link.nextElementSibling;
+      if (sib && sib.tagName === 'BUTTON') return sib;
+    }
     var all = document.querySelectorAll('button');
     for (var i = 0; i < all.length; i++) {
       if ((all[i].textContent || '').indexOf('🦍') !== -1) return all[i];
@@ -372,7 +391,7 @@
     if (!btn) return false;
     detected = true;
     clearInterval(pollTimer); clearTimeout(timeoutTimer);
-    setState('installing', 'Installing script…', 'Adding YouTube Downloader to TamperGorilla');
+    setState('installing', 'Installing script…', 'Adding Article to PDF to TamperGorilla');
     btn.click();
     watchButton(btn);
     return true;
@@ -384,7 +403,7 @@
   timeoutTimer = setTimeout(function () {
     if (!detected) {
       clearInterval(pollTimer);
-      setState('no-ext', 'Extension not found', 'Install TamperGorilla first, then reload this page to activate the downloader automatically.');
+      setState('no-ext', 'Extension not found', 'Install TamperGorilla first, then reload this page to activate the script automatically.');
     }
   }, TIMEOUT_MS);
 })();
