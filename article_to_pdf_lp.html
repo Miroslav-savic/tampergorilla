@@ -1,0 +1,814 @@
+<title>Article to PDF</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+:root {
+  --bg:           #F7F5F2;
+  --bg2:          #EDEAE5;
+  --surface:      #FFFFFF;
+  --ink:          #1A1410;
+  --ink2:         #6B6358;
+  --ink3:         #9C9289;
+  --accent:       #C0392B;
+  --accent-h:     #A93226;
+  --accent-dim:   rgba(192,57,43,.09);
+  --border:       rgba(26,20,16,.10);
+  --border-s:     rgba(26,20,16,.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:         #18160F;
+    --bg2:        #211F17;
+    --surface:    #2A2820;
+    --ink:        #F0EDE6;
+    --ink2:       #ABA49A;
+    --ink3:       #6E6860;
+    --accent:     #E84C3C;
+    --accent-h:   #C0392B;
+    --accent-dim: rgba(232,76,60,.11);
+    --border:     rgba(240,237,230,.10);
+    --border-s:   rgba(240,237,230,.20);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:         #18160F;
+  --bg2:        #211F17;
+  --surface:    #2A2820;
+  --ink:        #F0EDE6;
+  --ink2:       #ABA49A;
+  --ink3:       #6E6860;
+  --accent:     #E84C3C;
+  --accent-h:   #C0392B;
+  --accent-dim: rgba(232,76,60,.11);
+  --border:     rgba(240,237,230,.10);
+  --border-s:   rgba(240,237,230,.20);
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(16px,5vw,64px);
+  height: 56px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  color: var(--ink);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -.01em;
+}
+.nav-gorilla { font-size: 20px; }
+.nav-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.nav-install:hover { background: var(--accent-h); }
+
+/* ── HERO ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 64px clamp(16px,5vw,64px) 56px;
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .10em;
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(34px,4.8vw,56px);
+  line-height: 1.06;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+  color: var(--ink);
+  margin: 0 0 20px;
+}
+.hero h1 em { font-style: normal; color: var(--accent); }
+
+.hero-desc {
+  font-size: 17px;
+  color: var(--ink2);
+  line-height: 1.65;
+  max-width: 430px;
+  margin: 0 0 32px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  text-decoration: none;
+}
+.btn-primary:hover { background: var(--accent-h); transform: translateY(-1px); }
+
+.btn-ghost {
+  font-size: 14px;
+  color: var(--ink2);
+  text-decoration: none;
+  transition: color .12s;
+}
+.btn-ghost:hover { color: var(--ink); }
+
+.hero-sub {
+  margin-top: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+/* ── MOCK BROWSER ── */
+.mock-wrap {
+  position: relative;
+  padding-top: 18px; /* room for tags */
+}
+
+.mock-tag {
+  position: absolute;
+  top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+.mock-tag-before { left: 10px; background: var(--border-s); color: var(--ink2); }
+.mock-tag-after  { right: 10px; background: var(--accent); color: #fff; }
+
+.mock-browser {
+  background: var(--surface);
+  border: 1px solid var(--border-s);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.10);
+}
+
+.mock-chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+}
+.mock-dots { display: flex; gap: 5px; }
+.mock-dot  { width: 10px; height: 10px; border-radius: 50%; }
+.mock-dot:nth-child(1) { background: #FF5F57; }
+.mock-dot:nth-child(2) { background: #FEBC2E; }
+.mock-dot:nth-child(3) { background: #28C840; }
+.mock-url {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 8px;
+}
+
+/* Split before / after inside browser */
+.mock-page {
+  display: flex;
+  height: 280px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* BEFORE — messy web page */
+.mock-before {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  font-size: 8px;
+}
+.mock-nav-bar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 8px;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.mock-nav-item {
+  background: var(--border);
+  color: var(--ink3);
+  padding: 2px 5px;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7px;
+}
+.mock-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+.mock-main {
+  flex: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+.mock-sidebar {
+  width: 46px;
+  border-left: 1px solid var(--border);
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bar { height: 5px; border-radius: 2px; background: var(--bg2); }
+.bar.ink   { background: var(--ink); opacity: .14; }
+.bar.h     { height: 9px; }
+.bar.full  { width: 100%; }
+.bar.med   { width: 82%; }
+.bar.short { width: 55%; }
+.bar.grey  { background: var(--ink3); opacity: .3; }
+.ad-box {
+  background: rgba(192,57,43,.05);
+  border: 1px dashed rgba(192,57,43,.25);
+  border-radius: 2px;
+  padding: 3px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 6px;
+  color: var(--ink3);
+  flex-shrink: 0;
+}
+
+/* divider arrow */
+.mock-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border-s);
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+  margin: 0 -1px;
+}
+
+/* AFTER — clean PDF */
+.mock-after {
+  width: 45%;
+  background: #fff;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+}
+.pdf-domain {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 6px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding-bottom: 5px;
+  border-bottom: 1.5px solid #111;
+  margin-bottom: 3px;
+}
+.pdf-h1  { height: 10px; width: 92%; background: #111; border-radius: 1px; opacity: .8; }
+.pdf-h2  { height: 7px;  width: 72%; background: #111; border-radius: 1px; opacity: .65; }
+.pdf-meta{ height: 5px;  width: 58%; background: #aaa; border-radius: 1px; margin-bottom: 3px; }
+.pdf-p   { height: 4px;  width: 100%; background: #ccc; border-radius: 1px; }
+.pdf-img { height: 36px; background: #e8e8e8; border-radius: 2px; margin: 4px 0; }
+
+/* floating PDF button overlay */
+.mock-pdf-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 10px rgba(192,57,43,.45);
+  pointer-events: none;
+}
+
+/* ── FEATURE GRID ── */
+.features {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 clamp(16px,5vw,64px) 72px;
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .10em;
+  color: var(--ink3);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.feat {
+  background: var(--bg);
+  padding: 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--accent-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.feat h3 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  margin: 0;
+}
+.feat p {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.55;
+  margin: 0;
+}
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: var(--accent-dim);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+/* ── HOW IT WORKS ── */
+.hiw-wrap {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 64px clamp(16px,5vw,64px);
+}
+.hiw-inner { max-width: 1160px; margin: 0 auto; }
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 40px;
+  position: relative;
+}
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: 1px;
+  background: var(--border-s);
+  z-index: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.step-num {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border-s);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.step h3 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin: 0;
+}
+.step p {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── BOTTOM CTA ── */
+.cta-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 72px clamp(16px,5vw,64px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.cta-wrap h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px,3.8vw,44px);
+  letter-spacing: -.03em;
+  color: var(--ink);
+  text-wrap: balance;
+  max-width: 520px;
+  margin: 0;
+}
+.cta-wrap p { font-size: 16px; color: var(--ink2); max-width: 400px; margin: 0; }
+.cta-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cta-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 22px clamp(16px,5vw,64px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.footer p { font-size: 13px; color: var(--ink3); margin: 0; }
+.footer a  { color: var(--ink2); text-decoration: none; }
+.footer a:hover { color: var(--ink); }
+.footer-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 800px) {
+  .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 40px; }
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+  .steps { grid-template-columns: 1fr; gap: 28px; }
+  .steps::before { display: none; }
+  .step { flex-direction: row; gap: 16px; align-items: flex-start; }
+  .step > div { flex: 1; }
+}
+
+@media (max-width: 480px) {
+  .feat-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="https://miroslav-savic.github.io/tampergorilla/landing.html" class="nav-brand">
+    <span class="nav-gorilla">🦍</span>
+    TamperGorilla
+  </a>
+  <button class="nav-install" onclick="installScript()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Install Script
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="eyebrow">Article to PDF · v1.0.0</div>
+    <h1>Any article,<br><em>beautifully</em><br>saved.</h1>
+    <p class="hero-desc">A floating red button appears on every page. One click strips ads, navigation and comment sections, then opens a clean A4 print view with Georgia serif, proper margins, and your article's title, byline and date.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="installScript()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Install Script
+      </button>
+      <a href="https://miroslav-savic.github.io/tampergorilla/landing.html" class="btn-ghost">Get TamperGorilla →</a>
+    </div>
+    <p class="hero-sub">@match *://*/*orks on every website · @grant none</p>
+  </div>
+
+  <!-- MOCK BROWSER -->
+  <div class="mock-wrap">
+    <span class="mock-tag mock-tag-before">before</span>
+    <span class="mock-tag mock-tag-after">after PDF</span>
+    <div class="mock-browser">
+      <div class="mock-chrome">
+        <div class="mock-dots">
+          <div class="mock-dot"></div>
+          <div class="mock-dot"></div>
+          <div class="mock-dot"></div>
+        </div>
+        <div class="mock-url">techblog.example.com/posts/async-javascript-explained</div>
+      </div>
+      <div class="mock-page">
+        <!-- BEFORE: messy web page -->
+        <div class="mock-before">
+          <div class="mock-nav-bar">
+            <span class="mock-nav-item">Home</span>
+            <span class="mock-nav-item">News</span>
+            <span class="mock-nav-item">Topics</span>
+            <span class="mock-nav-item">Login</span>
+            <span class="mock-nav-item">Subscribe</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-main">
+              <div class="ad-box">ADVERTISEMENT 728×90</div>
+              <div class="bar h ink full"></div>
+              <div class="bar grey short"></div>
+              <div class="bar ink full"></div>
+              <div class="bar ink med"></div>
+              <div class="bar ink full"></div>
+              <div class="ad-box" style="margin:3px 0">Sponsored · Read more</div>
+              <div class="bar ink med"></div>
+              <div class="bar ink full"></div>
+              <div class="bar grey med"></div>
+              <div class="bar ink full"></div>
+              <div class="bar ink med"></div>
+              <div class="ad-box">Subscribe to our newsletter</div>
+              <div class="bar ink full"></div>
+              <div class="bar ink med"></div>
+            </div>
+            <div class="mock-sidebar">
+              <div class="ad-box" style="height:56px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px">AD<br>300×250</div>
+              <div class="ad-box" style="font-size:5px;padding:4px 2px">Related<br>posts</div>
+              <div class="bar full" style="background:var(--border)"></div>
+              <div class="bar full" style="background:var(--border)"></div>
+              <div class="ad-box" style="height:32px">AD</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- divider arrow -->
+        <div class="mock-divider">→</div>
+
+        <!-- AFTER: clean PDF layout -->
+        <div class="mock-after">
+          <div class="pdf-domain">techblog.example.com</div>
+          <div class="pdf-h1"></div>
+          <div class="pdf-h2"></div>
+          <div class="pdf-meta"></div>
+          <div class="pdf-p"></div>
+          <div class="pdf-p" style="width:86%"></div>
+          <div class="pdf-p"></div>
+          <div class="pdf-p" style="width:71%"></div>
+          <div class="pdf-img"></div>
+          <div class="pdf-p"></div>
+          <div class="pdf-p" style="width:90%"></div>
+          <div class="pdf-p"></div>
+          <div class="pdf-p" style="width:65%"></div>
+          <div class="pdf-p"></div>
+        </div>
+
+        <!-- floating PDF button -->
+        <div class="mock-pdf-btn">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="section-label">What it does</div>
+  <div class="feat-grid">
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <h3>Every website</h3>
+      <p>Matches <span class="mono">*://*/*</span> — every URL, every protocol. Install once, use on any page you visit.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <h3>Strips the noise</h3>
+      <p>Removes ads, nav bars, footers, sidebars, share buttons, cookie banners, newsletter popups, and comments.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <h3>Proper A4 layout</h3>
+      <p>20mm margins, Georgia serif body text, structured header with domain, title, byline and date. Page breaks where they should.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <h3>Smart extraction</h3>
+      <p>Tries 12+ selectors — <span class="mono">article</span>, <span class="mono">[itemprop]</span>, <span class="mono">main</span> — before falling back to the element with the highest text density on the page.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <h3>Images preserved</h3>
+      <p>In-article images are kept and resized for print. Inline figures, captions, and code blocks too — nothing important gets dropped.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Zero dependencies</h3>
+      <p>No account, no server, no tracking. <span class="mono">@grant none</span> — everything runs locally in your browser, nothing leaves your machine.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="hiw-wrap">
+  <div class="hiw-inner">
+    <div class="section-label">How it works</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Install TamperGorilla</h3>
+          <p>Add TamperGorilla to Edge or Chrome. It's a userscript manager built for MV3 — no compromises, no eval hacks.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Install this script</h3>
+          <p>Click "Install Script" above. TamperGorilla detects the <span class="mono">.user.js</span> file and adds it to your active scripts instantly.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Click PDF on any page</h3>
+          <p>A red PDF button appears bottom-right on every site. Click it — the browser print dialog opens with a clean, ad-free layout ready to save.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<section class="cta-wrap">
+  <h2>Clean reading,<br>offline forever.</h2>
+  <p>Stop copy-pasting into Word. Every article is one click away from your PDF archive.</p>
+  <div class="cta-actions">
+    <button class="btn-primary" onclick="installScript()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Install Article to PDF
+    </button>
+    <a href="https://miroslav-savic.github.io/tampergorilla/landing.html" class="btn-ghost">Get TamperGorilla →</a>
+  </div>
+  <p class="cta-note">Requires TamperGorilla · Free · Open source</p>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>© 2026 TamperGorilla ·
+    <a href="https://miroslav-savic.github.io/tampergorilla/landing.html">Extension</a> ·
+    <a href="https://github.com/Miroslav-savic/tampergorilla">GitHub</a>
+  </p>
+  <p class="footer-mono">article_to_pdf.user.js v1.0.0</p>
+</footer>
+
+<script>
+function installScript() {
+  try {
+    document.cookie = 'source=INTERNAL; path=/; max-age=2592000; SameSite=Lax';
+  } catch (_) {}
+  window.location.href = 'https://miroslav-savic.github.io/tampergorilla/article_to_pdf.user.js?source=INTERNAL';
+}
+</script>
