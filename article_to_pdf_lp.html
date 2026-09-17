@@ -1,5 +1,13 @@
 <title>Article to PDF</title>
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RD5ZB4NYWR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-RD5ZB4NYWR');
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap">
 
@@ -185,7 +193,7 @@ body {
 /* ── MOCK BROWSER ── */
 .mock-wrap {
   position: relative;
-  padding-top: 18px; /* room for tags */
+  padding-top: 18px;
 }
 
 .mock-tag {
@@ -235,7 +243,6 @@ body {
   margin-left: 8px;
 }
 
-/* Split before / after inside browser */
 .mock-page {
   display: flex;
   height: 280px;
@@ -243,7 +250,6 @@ body {
   position: relative;
 }
 
-/* BEFORE — messy web page */
 .mock-before {
   width: 55%;
   display: flex;
@@ -308,7 +314,6 @@ body {
   flex-shrink: 0;
 }
 
-/* divider arrow */
 .mock-divider {
   display: flex;
   align-items: center;
@@ -329,7 +334,6 @@ body {
   margin: 0 -1px;
 }
 
-/* AFTER — clean PDF */
 .mock-after {
   width: 45%;
   background: #fff;
@@ -355,7 +359,6 @@ body {
 .pdf-p   { height: 4px;  width: 100%; background: #ccc; border-radius: 1px; }
 .pdf-img { height: 36px; background: #e8e8e8; border-radius: 2px; margin: 4px 0; }
 
-/* floating PDF button overlay */
 .mock-pdf-btn {
   position: absolute;
   bottom: 12px;
@@ -627,7 +630,6 @@ body {
         <div class="mock-url">techblog.example.com/posts/async-javascript-explained</div>
       </div>
       <div class="mock-page">
-        <!-- BEFORE: messy web page -->
         <div class="mock-before">
           <div class="mock-nav-bar">
             <span class="mock-nav-item">Home</span>
@@ -663,11 +665,7 @@ body {
             </div>
           </div>
         </div>
-
-        <!-- divider arrow -->
         <div class="mock-divider">→</div>
-
-        <!-- AFTER: clean PDF layout -->
         <div class="mock-after">
           <div class="pdf-domain">techblog.example.com</div>
           <div class="pdf-h1"></div>
@@ -684,8 +682,6 @@ body {
           <div class="pdf-p" style="width:65%"></div>
           <div class="pdf-p"></div>
         </div>
-
-        <!-- floating PDF button -->
         <div class="mock-pdf-btn">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           PDF
@@ -809,6 +805,7 @@ function installScript() {
   try {
     document.cookie = 'source=INTERNAL; path=/; max-age=2592000; SameSite=Lax';
   } catch (_) {}
+  gtag('event', 'click_install', { event_category: 'cta', event_label: 'get_tampergorilla' });
   window.open('https://microsoftedge.microsoft.com/addons/detail/tampergorilla/odladlcmiodjgpobhibadefocdgenfkh', '_blank');
 }
 
@@ -816,6 +813,7 @@ function installDirect() {
   try {
     document.cookie = 'source=INTERNAL; path=/; max-age=2592000; SameSite=Lax';
   } catch (_) {}
+  gtag('event', 'click_install', { event_category: 'cta', event_label: 'install_script_direct' });
   window.open('https://miroslav-savic.github.io/tampergorilla/article_to_pdf.user.js?source=INTERNAL', '_blank');
 }
 </script>
