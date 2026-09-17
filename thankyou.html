@@ -1,7 +1,14 @@
-<!doctype html>
 <title>Article to PDF — Thank You</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- GA4 ─ same property as landing page -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RD5ZB4NYWR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-RD5ZB4NYWR');
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -233,7 +240,8 @@
   <h1>You're all set.</h1>
   <p class="subtitle">Article to PDF is active. Visit any article or blog post and you'll see a red PDF button in the bottom-right corner of every page.</p>
 
-  <a href="https://en.wikipedia.org/wiki/Special:Random" class="btn-primary" target="_blank" rel="noopener">
+  <a href="https://en.wikipedia.org/wiki/Special:Random" class="btn-primary" target="_blank" rel="noopener"
+     onclick="gtag('event','click_try_article',{event_category:'cta',event_label:'open_random_article'})">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
       <polyline points="14 2 14 8 20 8"/>
@@ -309,12 +317,14 @@
       </div>
 
       <a class="action-btn v-accent btn-retry"
-         href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/article_to_pdf.user.js">
+         href="https://raw.githubusercontent.com/Miroslav-savic/tampergorilla/refs/heads/main/article_to_pdf.user.js"
+         onclick="gtag('event','click_manual_install',{event_category:'fallback',event_label:'install_error_retry'})">
         Install manually ↗
       </a>
       <a class="action-btn v-outline btn-get-ext"
          href="https://microsoftedge.microsoft.com/addons/detail/tampergorilla/odladlcmiodjgpobhibadefocdgenfkh"
-         target="_blank" rel="noopener">
+         target="_blank" rel="noopener"
+         onclick="gtag('event','click_get_ext',{event_category:'fallback',event_label:'no_ext_detected'})">
         Get TamperGorilla ↗
       </a>
     </div>
@@ -336,6 +346,13 @@
   }
 
   var isInternal = getCookie('source') === 'INTERNAL';
+
+  /* ── KEY EVENT: which view loaded ── */
+  gtag('event', 'thankyou_view', {
+    event_category: 'install_flow',
+    event_label: isInternal ? 'internal' : 'direct'
+  });
+
   if (!isInternal) return;
 
   document.getElementById('view-normal').hidden   = true;
@@ -358,6 +375,12 @@
 
   setState('detecting', 'Detecting extension…', 'Looking for TamperGorilla in your browser');
 
+  /* ── KEY EVENT: detecting started ── */
+  gtag('event', 'install_detecting', {
+    event_category: 'install_flow',
+    event_label: 'article_to_pdf'
+  });
+
   function watchButton(btn) {
     var watcher = setInterval(function () {
       if (done) { clearInterval(watcher); return; }
@@ -365,9 +388,19 @@
       if (t.indexOf('✅') !== -1 || t.indexOf('Installed') !== -1) {
         done = true; clearInterval(watcher);
         setState('success', "Script activated!", 'Visit any article and click the red PDF button in the bottom-right corner.');
+        /* ── KEY EVENT: install success ── */
+        gtag('event', 'install_success', {
+          event_category: 'install_flow',
+          event_label: 'article_to_pdf'
+        });
       } else if (t.indexOf('❌') !== -1 || t.indexOf('Error') !== -1) {
         done = true; clearInterval(watcher);
         setState('error', 'Installation failed', 'The script could not be fetched. Try installing it manually from GitHub.');
+        /* ── KEY EVENT: install error ── */
+        gtag('event', 'install_error', {
+          event_category: 'install_flow',
+          event_label: 'article_to_pdf'
+        });
       }
     }, POLL_MS);
   }
@@ -392,6 +425,11 @@
     detected = true;
     clearInterval(pollTimer); clearTimeout(timeoutTimer);
     setState('installing', 'Installing script…', 'Adding Article to PDF to TamperGorilla');
+    /* ── KEY EVENT: TG found, install started ── */
+    gtag('event', 'install_start', {
+      event_category: 'install_flow',
+      event_label: 'article_to_pdf'
+    });
     btn.click();
     watchButton(btn);
     return true;
@@ -404,6 +442,11 @@
     if (!detected) {
       clearInterval(pollTimer);
       setState('no-ext', 'Extension not found', 'Install TamperGorilla first, then reload this page to activate the script automatically.');
+      /* ── KEY EVENT: TG extension not found ── */
+      gtag('event', 'install_no_ext', {
+        event_category: 'install_flow',
+        event_label: 'article_to_pdf'
+      });
     }
   }, TIMEOUT_MS);
 })();
