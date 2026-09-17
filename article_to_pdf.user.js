@@ -1,358 +1,329 @@
 // ==UserScript==
-// @name         YT Downloader
+// @name         Article to PDF
 // @namespace    https://github.com/Miroslav-savic/tampergorilla
 // @version      1.0.0
-// @description  Download YouTube videos directly from the video page
+// @description  Extract clean article content and export as PDF
 // @author       TamperGorilla
-// @match        https://www.youtube.com/watch*
-// @match        https://youtube.com/watch*
-// @grant        GM_download
+// @match        *://*/*
+// @grant        none
 // @run-at       document-idle
 // ==/UserScript==
 
 (function () {
   'use strict';
-  console.log('[TG-YT] script loaded, path:', location.pathname, 'pr:', !!window.ytInitialPlayerResponse);
 
-  const PANEL_ID  = 'tg-yt-dl-panel';
-  const STYLE_ID  = 'tg-yt-dl-style';
-  const RETRY_MS  = 800;
-  const MAX_TRIES = 20;
+  // ── Inject floating button ────────────────────────────────────────────────
+  function injectButton() {
+    if (document.getElementById('tg-pdf-btn')) return;
 
-  // ── Inject CSS once ──────────────────────────────────────────────────────
-  function injectStyle() {
-    if (document.getElementById(STYLE_ID)) return;
-    const s = document.createElement('style');
-    s.id = STYLE_ID;
-    s.textContent = `
-      #tg-yt-dl-panel {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        padding: 10px 14px;
-        margin-top: 8px;
-        background: var(--yt-spec-base-background, #fff);
-        border: 1px solid var(--yt-spec-10-percent-layer, rgba(0,0,0,.1));
-        border-radius: 10px;
-        font-family: 'Roboto', sans-serif;
-        font-size: 13px;
-        color: var(--yt-spec-text-primary, #0f0f0f);
-      }
-      #tg-yt-dl-panel .tg-label {
-        font-weight: 600;
-        font-size: 12px;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-        color: var(--yt-spec-text-secondary, #606060);
-        white-space: nowrap;
-      }
-      #tg-yt-dl-panel .tg-chips {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        flex: 1;
-      }
-      #tg-yt-dl-panel .tg-chip {
-        padding: 4px 12px;
-        border-radius: 6px;
-        border: 1px solid var(--yt-spec-10-percent-layer, rgba(0,0,0,.12));
-        background: transparent;
-        color: var(--yt-spec-text-primary, #0f0f0f);
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background .12s, color .12s;
-        font-family: 'Roboto Mono', monospace;
-      }
-      #tg-yt-dl-panel .tg-chip:hover {
-        background: var(--yt-spec-10-percent-layer, rgba(0,0,0,.08));
-      }
-      #tg-yt-dl-panel .tg-chip.tg-active {
-        background: #C0392B;
-        border-color: #C0392B;
-        color: #fff;
-      }
-      #tg-yt-dl-panel .tg-dl-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 16px;
-        border-radius: 8px;
-        background: #C0392B;
-        color: #fff;
-        font-size: 13px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        font-family: 'Roboto', sans-serif;
-        transition: background .12s;
-        white-space: nowrap;
-      }
-      #tg-yt-dl-panel .tg-dl-btn:hover { background: #E74C3C; }
-      #tg-yt-dl-panel .tg-dl-btn:disabled {
-        background: var(--yt-spec-10-percent-layer, #ccc);
-        color: var(--yt-spec-text-secondary, #666);
-        cursor: default;
-      }
-      #tg-yt-dl-panel .tg-status {
-        font-size: 12px;
-        color: var(--yt-spec-text-secondary, #606060);
-        width: 100%;
-        margin-top: 2px;
-        display: none;
-      }
-      #tg-yt-dl-panel .tg-status.visible { display: block; }
-    `;
-    document.head.appendChild(s);
+    const btn = document.createElement('button');
+    btn.id = 'tg-pdf-btn';
+    btn.title = 'Save article as PDF';
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>PDF</span>`;
+
+    Object.assign(btn.style, {
+      position: 'fixed',
+      bottom: '24px',
+      right: '24px',
+      zIndex: '2147483647',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px',
+      padding: '9px 16px',
+      background: '#C0392B',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '8px',
+      fontSize: '13px',
+      fontWeight: '600',
+      fontFamily: 'system-ui, sans-serif',
+      cursor: 'pointer',
+      boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+      transition: 'background .12s',
+    });
+
+    btn.addEventListener('mouseenter', () => { btn.style.background = '#E74C3C'; });
+    btn.addEventListener('mouseleave', () => { btn.style.background = '#C0392B'; });
+    btn.addEventListener('click', exportPdf);
+
+    document.body.appendChild(btn);
   }
 
-  // ── Parse ytInitialPlayerResponse from page ──────────────────────────────
-  function getPlayerResponse() {
-    try {
-      // Check the global variable first
-      if (window.ytInitialPlayerResponse) return window.ytInitialPlayerResponse;
+  // ── Extract article content ───────────────────────────────────────────────
+  function extractArticle() {
+    // Selectors for known content containers, best-first
+    const CONTENT_SELECTORS = [
+      'article',
+      '[role="article"]',
+      'main article',
+      '.article-body',
+      '.article-content',
+      '.post-content',
+      '.entry-content',
+      '.story-body',
+      '.content-body',
+      '.single-content',
+      '[itemprop="articleBody"]',
+      'main',
+      '[role="main"]',
+      '.container article',
+    ];
 
-      // Fallback: search inline scripts
-      const scripts = document.querySelectorAll('script:not([src])');
-      for (const sc of scripts) {
-        const m = sc.textContent.match(/ytInitialPlayerResponse\s*=\s*(\{.+?\});/s);
-        if (m) {
-          try { return JSON.parse(m[1]); } catch (_) { /* continue */ }
+    // Tags/classes to strip from extracted content
+    const STRIP_SELECTORS = [
+      'script', 'style', 'noscript', 'iframe', 'object', 'embed',
+      'nav', 'header', 'footer', 'aside',
+      '.ad', '.ads', '.advertisement', '.promo',
+      '.social-share', '.share-buttons', '.related-posts',
+      '.newsletter', '.subscription', '.paywall',
+      '[data-ad]', '[class*="advert"]', '[class*="banner"]',
+      '.comments', '#comments',
+    ];
+
+    let contentEl = null;
+
+    for (const sel of CONTENT_SELECTORS) {
+      const el = document.querySelector(sel);
+      if (el && el.innerText.trim().length > 200) {
+        contentEl = el;
+        break;
+      }
+    }
+
+    // Fallback: find element with most text
+    if (!contentEl) {
+      let best = null, bestLen = 0;
+      document.querySelectorAll('div, section').forEach(el => {
+        const len = el.innerText.trim().length;
+        if (len > bestLen && len < 50000) {
+          bestLen = len;
+          best = el;
         }
-      }
-    } catch (_) {}
-    return null;
-  }
-
-  // ── Extract usable formats ───────────────────────────────────────────────
-  function getFormats(pr) {
-    const sd = pr?.streamingData;
-    if (!sd) return [];
-
-    const combined = (sd.formats || []).filter(f => f.url && f.mimeType?.startsWith('video'));
-    const audioOnly = (sd.adaptiveFormats || []).filter(f => f.url && f.mimeType?.startsWith('audio/mp4'));
-
-    const results = [];
-
-    // Combined video+audio formats (sorted best quality first)
-    const qualityOrder = ['hd1080', 'hd720', 'large', 'medium', 'small'];
-    const seen = new Set();
-
-    for (const q of qualityOrder) {
-      const f = combined.find(x => x.quality === q);
-      if (f && !seen.has(f.quality)) {
-        seen.add(f.quality);
-        results.push({
-          label: f.qualityLabel || f.quality,
-          url:   f.url,
-          mime:  f.mimeType.split(';')[0],
-          type:  'video',
-          itag:  f.itag,
-        });
-      }
+      });
+      contentEl = best || document.body;
     }
 
-    // Best audio-only (MP4/AAC)
-    const bestAudio = audioOnly.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
-    if (bestAudio) {
-      results.push({
-        label: 'MP3',
-        url:   bestAudio.url,
-        mime:  'audio/mp4',
-        type:  'audio',
-        itag:  bestAudio.itag,
-      });
-    }
+    // Clone to avoid modifying the live page
+    const clone = contentEl.cloneNode(true);
 
-    return results;
-  }
-
-  // ── Fallback: cobalt.tools panel (for cipher-protected videos) ────────────
-  function buildCobaltPanel() {
-    const panel = document.createElement('div');
-    panel.id = PANEL_ID;
-
-    const label = document.createElement('span');
-    label.className = 'tg-label';
-    label.textContent = 'Download';
-    panel.appendChild(label);
-
-    const note = document.createElement('span');
-    note.style.cssText = 'font-size:12px;color:var(--yt-spec-text-secondary,#606060);flex:1';
-    note.textContent = 'Protected video — opens in external downloader';
-    panel.appendChild(note);
-
-    const btn = document.createElement('button');
-    btn.className = 'tg-dl-btn';
-    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Save`;
-    btn.addEventListener('click', () => {
-      window.open('https://cobalt.tools/#url=' + encodeURIComponent(location.href), '_blank');
-    });
-    panel.appendChild(btn);
-
-    return panel;
-  }
-
-  // ── Get video title ──────────────────────────────────────────────────────
-  function getTitle(pr) {
-    return pr?.videoDetails?.title
-      || document.title.replace(' - YouTube', '').trim()
-      || 'video';
-  }
-
-  function safeFilename(str) {
-    return str.replace(/[\\/:*?"<>|]/g, '_').slice(0, 120);
-  }
-
-  // ── Build / update panel ─────────────────────────────────────────────────
-  function buildPanel(formats, title) {
-    let panel = document.getElementById(PANEL_ID);
-    if (panel) panel.remove();
-
-    panel = document.createElement('div');
-    panel.id = PANEL_ID;
-
-    let selected = formats[0];
-
-    // Label
-    const label = document.createElement('span');
-    label.className = 'tg-label';
-    label.textContent = 'Download';
-    panel.appendChild(label);
-
-    // Quality chips
-    const chips = document.createElement('div');
-    chips.className = 'tg-chips';
-
-    formats.forEach((fmt, i) => {
-      const chip = document.createElement('button');
-      chip.className = 'tg-chip' + (i === 0 ? ' tg-active' : '');
-      chip.textContent = fmt.label;
-      chip.addEventListener('click', () => {
-        selected = fmt;
-        chips.querySelectorAll('.tg-chip').forEach(c => c.classList.remove('tg-active'));
-        chip.classList.add('tg-active');
-        status.classList.remove('visible');
-      });
-      chips.appendChild(chip);
-    });
-    panel.appendChild(chips);
-
-    // Download button
-    const btn = document.createElement('button');
-    btn.className = 'tg-dl-btn';
-    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Save`;
-    panel.appendChild(btn);
-
-    // Status line
-    const status = document.createElement('div');
-    status.className = 'tg-status';
-    panel.appendChild(status);
-
-    btn.addEventListener('click', () => {
-      if (!selected) return;
-
-      const ext      = selected.type === 'audio' ? 'm4a' : 'mp4';
-      const filename = safeFilename(title) + '.' + ext;
-
-      status.textContent = 'Starting download…';
-      status.classList.add('visible');
-      btn.disabled = true;
-
-      GM_download({
-        url:      selected.url,
-        name:     filename,
-        onload:   () => {
-          status.textContent = 'Saved: ' + filename;
-          btn.disabled = false;
-        },
-        onerror:  () => {
-          // GM_download can fail due to CORS on some formats — fall back to anchor
-          status.textContent = 'Opening download link…';
-          btn.disabled = false;
-          const a = document.createElement('a');
-          a.href     = selected.url;
-          a.download = filename;
-          a.click();
-        },
-      });
+    // Strip noise elements
+    STRIP_SELECTORS.forEach(sel => {
+      clone.querySelectorAll(sel).forEach(el => el.remove());
     });
 
-    return panel;
-  }
-
-  // ── Insert panel into page ───────────────────────────────────────────────
-  function insertPanel(panel) {
-    // Try inserting before ytd-watch-metadata inside #primary-inner
-    const meta = document.querySelector('ytd-watch-metadata');
-    if (meta?.parentNode) { meta.parentNode.insertBefore(panel, meta); return true; }
-
-    // Fallback: append to #primary-inner
-    const primary = document.querySelector('#primary-inner');
-    if (primary) { primary.insertBefore(panel, primary.firstChild); return true; }
-
-    return false;
-  }
-
-  // ── Main: try to mount the panel ─────────────────────────────────────────
-  let tries = 0;
-  let observer = null;
-
-  function mount() {
-    tries++;
-    console.log('[TG-YT] mount() try', tries, 'pr:', !!getPlayerResponse(), 'meta:', !!document.querySelector('ytd-watch-metadata'));
-
-    const pr = getPlayerResponse();
-    if (!pr && tries < MAX_TRIES) { setTimeout(mount, RETRY_MS); return; }
-
-    const formats = pr ? getFormats(pr) : [];
-    const isCipher = pr && formats.length === 0;
-    console.log('[TG-YT] formats:', formats.length, 'isCipher:', isCipher);
-
-    injectStyle();
-    const panel = isCipher ? buildCobaltPanel() : (pr ? buildPanel(formats, getTitle(pr)) : null);
-    if (!panel) { if (tries < MAX_TRIES) { setTimeout(mount, RETRY_MS); return; } return; }
-
-    const ok = insertPanel(panel);
-    if (!ok && tries < MAX_TRIES) { setTimeout(mount, RETRY_MS); return; }
-
-    // Watch for YouTube removing our panel and re-insert it
-    if (observer) observer.disconnect();
-    observer = new MutationObserver(() => {
-      if (!document.getElementById(PANEL_ID)) {
-        observer.disconnect();
-        observer = null;
-        setTimeout(() => {
-          if (!document.getElementById(PANEL_ID)) insertPanel(panel);
-        }, 200);
+    // Extract images (keep only those with reasonable size)
+    clone.querySelectorAll('img').forEach(img => {
+      if (!img.src || img.src.startsWith('data:')) {
+        img.remove();
+      } else {
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        img.removeAttribute('srcset');
+        img.removeAttribute('sizes');
+        img.removeAttribute('loading');
       }
     });
-    const watchTarget = panel.parentNode || document.querySelector('#primary-inner');
-    if (watchTarget) observer.observe(watchTarget, { childList: true });
+
+    // Strip all inline onclick / event handlers
+    clone.querySelectorAll('*').forEach(el => {
+      [...el.attributes].forEach(attr => {
+        if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
+      });
+      el.removeAttribute('id');
+    });
+
+    return {
+      title:   document.title.replace(/\s*[|\-–—].*$/, '').trim() || document.location.hostname,
+      byline:  getMeta('author') || getEl('[rel="author"]') || getEl('.author') || getEl('[class*="byline"]') || '',
+      date:    getMeta('date') || getEl('time') || getEl('[class*="date"]') || getEl('[class*="time"]') || '',
+      domain:  document.location.hostname,
+      html:    clone.innerHTML,
+    };
   }
 
-  // ── Re-mount on YouTube SPA navigation ───────────────────────────────────
-  function onNavigate() {
-    tries = 0;
-    if (observer) { observer.disconnect(); observer = null; }
-    const existing = document.getElementById(PANEL_ID);
-    if (existing) existing.remove();
-    if (location.pathname === '/watch') {
-      setTimeout(mount, 600);
+  function getMeta(name) {
+    return (
+      document.querySelector(`meta[name="${name}"]`)?.content ||
+      document.querySelector(`meta[property="article:${name}"]`)?.content ||
+      document.querySelector(`meta[property="og:${name}"]`)?.content ||
+      ''
+    ).trim();
+  }
+
+  function getEl(sel) {
+    return document.querySelector(sel)?.innerText?.trim() || '';
+  }
+
+  // ── Build print window and trigger PDF ────────────────────────────────────
+  function exportPdf() {
+    const art = extractArticle();
+
+    const metaLine = [art.byline, art.date, art.domain].filter(Boolean).join(' · ');
+
+    const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>${escHtml(art.title)}</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.65;
+    color: #111;
+    background: #fff;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 0 40px;
+  }
+
+  /* ── Header ── */
+  .tg-header {
+    border-bottom: 2px solid #111;
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  .tg-domain {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #C0392B;
+    margin-bottom: 6px;
+  }
+  .tg-title {
+    font-size: 22pt;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #0a0a0a;
+    margin-bottom: 8px;
+  }
+  .tg-meta {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 8.5pt;
+    color: #555;
+  }
+
+  /* ── Content ── */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 1.4em 0 .45em;
+    color: #0a0a0a;
+    page-break-after: avoid;
+  }
+  h1 { font-size: 16pt; }
+  h2 { font-size: 13pt; }
+  h3 { font-size: 11.5pt; }
+  h4, h5, h6 { font-size: 10.5pt; }
+
+  p { margin: 0 0 .85em; orphans: 3; widows: 3; }
+
+  a { color: #111; text-decoration: underline; word-break: break-all; }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
+    page-break-inside: avoid;
+  }
+
+  figure { margin: 1.2em 0; page-break-inside: avoid; }
+  figcaption {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 8.5pt;
+    color: #666;
+    text-align: center;
+    margin-top: .3em;
+  }
+
+  blockquote {
+    border-left: 3px solid #C0392B;
+    margin: 1em 0;
+    padding: .4em 0 .4em 1em;
+    color: #333;
+    font-style: italic;
+  }
+
+  pre, code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9pt;
+    background: #f5f5f5;
+    border-radius: 3px;
+  }
+  pre { padding: .7em 1em; overflow: auto; margin: .8em 0; white-space: pre-wrap; }
+  code { padding: .1em .3em; }
+
+  ul, ol { margin: 0 0 .85em 1.4em; }
+  li { margin-bottom: .2em; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 9.5pt; }
+  th, td { border: 1px solid #ccc; padding: .35em .6em; text-align: left; }
+  th { background: #f2f2f2; font-weight: 700; }
+
+  hr { border: none; border-top: 1px solid #ddd; margin: 1.4em 0; }
+
+  @media print {
+    body { font-size: 10.5pt; }
+    a[href]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
+    a[href^="#"]::after, a[href^="javascript"]::after { content: ""; }
+  }
+</style>
+</head>
+<body>
+<div class="tg-header">
+  <div class="tg-domain">${escHtml(art.domain)}</div>
+  <h1 class="tg-title">${escHtml(art.title)}</h1>
+  ${metaLine ? `<div class="tg-meta">${escHtml(metaLine)}</div>` : ''}
+</div>
+<div class="tg-content">
+${art.html}
+</div>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank', 'width=900,height=700');
+    if (!win) {
+      alert('PDF: pop-up blocker is on. Allow pop-ups for this site and try again.');
+      return;
     }
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+
+    // Wait for images to load, then print
+    win.addEventListener('load', () => {
+      setTimeout(() => {
+        win.print();
+        // Close after print dialog (slight delay to allow cancel too)
+        win.addEventListener('afterprint', () => win.close());
+      }, 400);
+    });
   }
 
-  // YouTube uses History API for navigation
-  const _pushState = history.pushState.bind(history);
-  history.pushState = function (...args) {
-    _pushState(...args);
-    onNavigate();
-  };
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 
-  window.addEventListener('popstate', onNavigate);
-
-  // Initial load
-  if (location.pathname === '/watch') mount();
+  // ── Mount ────────────────────────────────────────────────────────────────
+  if (document.body) {
+    injectButton();
+  } else {
+    document.addEventListener('DOMContentLoaded', injectButton);
+  }
 
 })();
